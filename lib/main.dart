@@ -1,10 +1,12 @@
 import 'dart:math';
 
-import 'package:cod_zombies_2d/player.dart';
+import 'package:cod_zombies_2d/entities/player.dart';
+import 'package:cod_zombies_2d/maps/gamemap.dart';
 import 'package:cod_zombies_2d/test.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flame/extensions.dart';
@@ -20,23 +22,44 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   late final Player player;
 
+  late final GameMap map;
+
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
 
-    this.player = new Player();
+    this.map = new GameMap("map");
+    await this.add(map);
 
-    this.add(this.player);
+    this.player = this.map.player;
+
+    camera.viewport = FixedResolutionViewport(
+        Vector2(960, 540)
+    );
+
+    camera.followComponent(
+        player,
+        worldBounds: Rect.fromCenter(
+          center: Offset(this.map.pixelWidth / 2, this.map.pixelHeight / 2),
+          width: this.map.pixelWidth.toDouble(),
+          height: this.map.pixelHeight.toDouble()
+        )
+    );
+
+    return super.onLoad();
 
   }
+
+  @override
+  void resize(Vector2 newCanvasSize) {
+
+  }
+
 
   @override
   KeyEventResult onKeyEvent(
       RawKeyEvent event,
       Set<LogicalKeyboardKey> keysPressed,
       ) {
-
-    print(event);
 
     switch (event.runtimeType) {
       case RawKeyDownEvent: {
@@ -55,7 +78,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   @override
   bool onTapDown(TapDownInfo event) {
-    Vector2 tapPosition = event.eventPosition.viewport;
+    Vector2 tapPosition = event.eventPosition.game;
 
     this.add(new Test(tapPosition));
 
@@ -65,7 +88,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
   @override
   void onMouseMove(PointerHoverInfo info) {
 
-    Vector2 pointerPosition = info.eventPosition.viewport;
+    Vector2 pointerPosition = info.eventPosition.game;
 
     double pointerPositionX = pointerPosition.x;
     double pointerPositionY = pointerPosition.y;

@@ -1,3 +1,4 @@
+import 'package:cod_zombies_2d/entities/collidables.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
@@ -7,19 +8,50 @@ class Player extends SpriteComponent with HasHitboxes, Collidable {
 
   Vector2 _moveDirection = Vector2.zero();
 
-  double _speed = 300;
+  double _speed = 200;
 
-  Player() : super(size: Vector2.all(100));
+  Player(double srcX, double srcY, double size) :
+        super(
+          size: Vector2(
+            size,
+            size
+          ),
+          position: Vector2(
+            srcX,
+            srcY
+          )
+        );
+
 
   Future<void> onLoad() async {
     this.sprite = await Sprite.load('Top_Down_Survivor/rifle/idle/survivor-idle_rifle_0.png');
     this.anchor = Anchor.center;
+
+    addHitbox(HitboxCircle());
+
+    return super.onLoad();
   }
 
   @override
-  void onGameResize(Vector2 gameSize) {
-    super.onGameResize(gameSize);
-    this.position = gameSize / 2;
+  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
+
+    if (other is CollidableObject) {
+      if (intersectionPoints.length == 2) {
+        final mid = ((intersectionPoints.elementAt(1) + intersectionPoints.elementAt(0)) / 2);
+
+        final collisionNormal = absoluteCenter - mid;
+        final seperationDistance = (size.x / 2) - collisionNormal.length;
+
+        position += collisionNormal.normalized().scaled(seperationDistance);
+      }
+    }
+
+    super.onCollision(intersectionPoints, other);
+  }
+
+  void setPosition(double x, double y) {
+    this.x = x;
+    this.y = y;
   }
 
   @override
