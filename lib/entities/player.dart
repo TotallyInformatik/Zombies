@@ -1,10 +1,11 @@
 import 'package:cod_zombies_2d/entities/collidables.dart';
+import 'package:cod_zombies_2d/main.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/services.dart';
 
-class Player extends SpriteComponent with HasHitboxes, Collidable {
+class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable {
 
   static final int spriteHeight = 28;
   static final int spriteWidth = 16;
@@ -14,6 +15,7 @@ class Player extends SpriteComponent with HasHitboxes, Collidable {
   late final Sprite _invertedSprite;
 
   double _speed = 100;
+  late final SpriteComponent crosshair;
 
   Player(double srcX, double srcY, double sizeRelation) :
         super(
@@ -37,7 +39,18 @@ class Player extends SpriteComponent with HasHitboxes, Collidable {
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
+    this.setupCrosshair();
+
     return super.onLoad();
+  }
+
+
+  void setupCrosshair() async {
+    crosshair = new SpriteComponent();
+    crosshair.sprite = await Sprite.load('crosshair.png');
+    crosshair.size = new Vector2(10, 10);
+    crosshair.anchor = Anchor.center;
+    this.gameRef.add(this.crosshair);
   }
 
   @override
@@ -71,6 +84,7 @@ class Player extends SpriteComponent with HasHitboxes, Collidable {
   void update(double dt) {
     super.update(dt);
     this.position += _moveDirection.normalized() * _speed * dt;
+    this.crosshair.position += _moveDirection.normalized() * _speed * dt;
   }
 
   void move(Set<LogicalKeyboardKey> keysPressed) {

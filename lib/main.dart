@@ -20,7 +20,6 @@ void main() async {
 class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMovementDetector, TapDetector {
 
   late final Player player;
-  late final SpriteComponent crosshair;
 
   late final GameMap map;
 
@@ -45,18 +44,8 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
         )
     );
 
-    setupCrosshair();
-
     return super.onLoad();
 
-  }
-
-  void setupCrosshair() async {
-    crosshair = new SpriteComponent();
-    crosshair.sprite = await Sprite.load('crosshair.png');
-    crosshair.size = new Vector2(10, 10);
-    crosshair.anchor = Anchor.center;
-    this.add(crosshair);
   }
 
   @override
@@ -107,14 +96,20 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
     double deltaX = pointerPositionX - playerPositionX;
 
-    this.crosshair.x = pointerPositionX;
-    this.crosshair.y = pointerPosition.y;
+    setCursorPosition(pointerPosition);
 
     if (deltaX > 0) {
       this.player.setStandardSprite();
     } else {
       this.player.setInvertedSprite();
     }
+
+  }
+
+  void setCursorPosition(Vector2 pointerPosition) {
+
+    this.player.crosshair.x = pointerPosition.x;
+    this.player.crosshair.y = pointerPosition.y;
 
   }
 
