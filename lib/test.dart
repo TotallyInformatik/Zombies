@@ -7,7 +7,7 @@ class Test extends SpriteComponent {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    this.sprite = await Sprite.load('Top_Down_Survivor/rifle/idle/survivor-idle_rifle_0.png');
+    this.sprite = await Sprite.load('Knight.png');
   }
 
 }

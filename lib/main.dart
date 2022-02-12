@@ -6,7 +6,6 @@ import 'package:cod_zombies_2d/test.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flame/extensions.dart';
@@ -21,19 +20,20 @@ void main() async {
 class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMovementDetector, TapDetector {
 
   late final Player player;
+  late final SpriteComponent crosshair;
 
   late final GameMap map;
 
   @override
   Future<void> onLoad() async {
 
-    this.map = new GameMap("map");
+    this.map = new GameMap("map2.tmx");
     await this.add(map);
 
     this.player = this.map.player;
 
     camera.viewport = FixedResolutionViewport(
-        Vector2(960, 540)
+        Vector2(465, 270)
     );
 
     camera.followComponent(
@@ -45,8 +45,18 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
         )
     );
 
+    setupCrosshair();
+
     return super.onLoad();
 
+  }
+
+  void setupCrosshair() async {
+    crosshair = new SpriteComponent();
+    crosshair.sprite = await Sprite.load('crosshair.png');
+    crosshair.size = new Vector2(10, 10);
+    crosshair.anchor = Anchor.center;
+    this.add(crosshair);
   }
 
   @override
@@ -91,21 +101,19 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
     Vector2 pointerPosition = info.eventPosition.game;
 
     double pointerPositionX = pointerPosition.x;
-    double pointerPositionY = pointerPosition.y;
 
     Vector2 playerPosition = this.player.position;
     double playerPositionX = playerPosition.x;
-    double playerPositionY = playerPosition.y;
 
     double deltaX = pointerPositionX - playerPositionX;
-    double deltaY = pointerPositionY - playerPositionY;
 
+    this.crosshair.x = pointerPositionX;
+    this.crosshair.y = pointerPosition.y;
 
     if (deltaX > 0) {
-      this.player.angle = atan(deltaY / deltaX);
+      this.player.setStandardSprite();
     } else {
-      // Wieso 135?
-      this.player.angle = 135 + atan(deltaY / deltaX);
+      this.player.setInvertedSprite();
     }
 
   }

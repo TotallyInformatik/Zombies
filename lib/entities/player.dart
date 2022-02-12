@@ -6,15 +6,20 @@ import 'package:flutter/services.dart';
 
 class Player extends SpriteComponent with HasHitboxes, Collidable {
 
+  static final int spriteHeight = 28;
+  static final int spriteWidth = 16;
+
   Vector2 _moveDirection = Vector2.zero();
+  late final Sprite _standardSprite;
+  late final Sprite _invertedSprite;
 
-  double _speed = 200;
+  double _speed = 100;
 
-  Player(double srcX, double srcY, double size) :
+  Player(double srcX, double srcY, double sizeRelation) :
         super(
           size: Vector2(
-            size,
-            size
+            spriteWidth * sizeRelation,
+            spriteHeight * sizeRelation
           ),
           position: Vector2(
             srcX,
@@ -24,10 +29,13 @@ class Player extends SpriteComponent with HasHitboxes, Collidable {
 
 
   Future<void> onLoad() async {
-    this.sprite = await Sprite.load('Top_Down_Survivor/rifle/idle/survivor-idle_rifle_0.png');
+    this._standardSprite = await Sprite.load('Knight.png');
+    this._invertedSprite = await Sprite.load('KnightInverted.png');
+
+    this.sprite = this._standardSprite;
     this.anchor = Anchor.center;
 
-    addHitbox(HitboxCircle());
+    addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
     return super.onLoad();
   }
@@ -49,10 +57,15 @@ class Player extends SpriteComponent with HasHitboxes, Collidable {
     super.onCollision(intersectionPoints, other);
   }
 
-  void setPosition(double x, double y) {
-    this.x = x;
-    this.y = y;
+  void setInvertedSprite() {
+    this.sprite = this._invertedSprite;
   }
+
+  void setStandardSprite() {
+    this.sprite = this._standardSprite;
+  }
+
+
 
   @override
   void update(double dt) {

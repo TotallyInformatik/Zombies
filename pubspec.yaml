@@ -59,28 +59,14 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/images/Top_Down_Survivor/rifle/idle/survivor-idle_rifle_0.png
+    - assets/images/DungeonTilesetII.png
+    - assets/images/Knight.png
+    - assets/images/KnightInverted.png
+    - assets/images/crosshair.png
 
+    - assets/tiles/DungeonTilesetII.tsx
     - assets/tiles/map.tmx
-    - assets/tiles/TXPlant.tsx
-    - assets/tiles/TXPlayer.tsx
-    - assets/tiles/TXProps.tsx
-    - assets/tiles/TXShadow.tsx
-    - assets/tiles/TXShadowPlant.tsx
-    - assets/tiles/TXStruct.tsx
-    - assets/tiles/TXTilesetGrass.tsx
-    - assets/tiles/TXTilesetStoneGround.tsx
-    - assets/tiles/TXTilesetWall.tsx
-
-    - assets/images/TXPlant.png
-    - assets/images/TXPlayer.png
-    - assets/images/TXProps.png
-    - assets/images/TXShadow.png
-    - assets/images/TXShadowPlant.png
-    - assets/images/TXStruct.png
-    - assets/images/TXTilesetGrass.png
-    - assets/images/TXTilesetStoneGround.png
-    - assets/images/TXTilesetWall.png
+    - assets/tiles/map2.tmx
 
   # To add assets to your application, add an assets section, like this:
   # assets:

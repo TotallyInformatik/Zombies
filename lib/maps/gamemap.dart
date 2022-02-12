@@ -36,8 +36,8 @@ class GameMap extends Component {
 
     for (final spawnPoint in spawnPointsLayer.objects) {
       switch (spawnPoint.type) {
-        case "player":
-          this.player = new Player(spawnPoint.x, spawnPoint.y, spawnPoint.width);
+        case "Player":
+          this.player = new Player(spawnPoint.x, spawnPoint.y, spawnPoint.width / Player.spriteHeight * 1.5);
           this.add(this.player);
       }
     }
@@ -67,7 +67,7 @@ class GameMap extends Component {
 
   Future<void> _loadMap() async {
 
-    this.map = await TiledComponent.load("map.tmx", Vector2.all(32));
+    this.map = await TiledComponent.load(this.mapName, Vector2.all(16));
     add(this.map);
 
     final actualTileMap = map.tileMap.map;
