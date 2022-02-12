@@ -63,7 +63,7 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
         final collisionNormal = absoluteCenter - mid;
         final seperationDistance = (size.x / 2) - collisionNormal.length;
 
-        position += collisionNormal.normalized().scaled(seperationDistance);
+        setPlayerAndCrosshairPosition(collisionNormal.normalized().scaled(seperationDistance));
       }
     }
 
@@ -83,8 +83,7 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
   @override
   void update(double dt) {
     super.update(dt);
-    this.position += _moveDirection.normalized() * _speed * dt;
-    this.crosshair.position += _moveDirection.normalized() * _speed * dt;
+    setPlayerAndCrosshairPosition(_moveDirection.normalized() * _speed * dt);
   }
 
   void move(Set<LogicalKeyboardKey> keysPressed) {
@@ -131,5 +130,10 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
   }
 
   Vector2 getMoveDirection() { return _moveDirection; }
+
+  void setPlayerAndCrosshairPosition(Vector2 movementVector) {
+    this.position += movementVector;
+    this.crosshair.position += movementVector;
+  }
 
 }

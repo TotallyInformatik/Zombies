@@ -49,6 +49,16 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
   }
 
   @override
+  void render(Canvas canvas) {
+
+    //Paint paint = new Paint();
+    //paint.color = Colors.redAccent;
+    //canvas.drawRect(Rect.largest, paint);
+    super.render(canvas);
+
+  }
+
+  @override
   void resize(Vector2 newCanvasSize) {
 
   }
