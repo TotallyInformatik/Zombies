@@ -1,5 +1,8 @@
-import 'package:cod_zombies_2d/entities/collidables.dart';
+import 'package:cod_zombies_2d/entities/wall.dart';
+import 'package:cod_zombies_2d/entities/zombies.dart';
 import 'package:cod_zombies_2d/main.dart';
+import 'package:cod_zombies_2d/maps/door.dart';
+import 'package:cod_zombies_2d/maps/door_area.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
@@ -15,7 +18,14 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
   late final Sprite _invertedSprite;
 
   double _speed = 100;
-  late final SpriteComponent crosshair;
+  int hp = 3;
+  bool _currentlyInvincible = false;
+
+  bool standingInDoorArea = false;
+  late DoorArea currentDoorArea;
+
+  int points = 500;
+  static final hitPointIncrease = 40;
 
   Player(double srcX, double srcY, double sizeRelation) :
         super(
@@ -39,12 +49,24 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
-    this.setupCrosshair();
+    //this.setupCrosshair();
 
     return super.onLoad();
   }
 
 
+  void handleImmovableCollision(Set<Vector2> intersectionPoints) {
+    if (intersectionPoints.length == 2) {
+      final mid = ((intersectionPoints.elementAt(1) + intersectionPoints.elementAt(0)) / 2);
+
+      final collisionNormal = absoluteCenter - mid;
+      final seperationDistance = (size.x / 2) - collisionNormal.length;
+
+      setPlayerPosition(collisionNormal.normalized().scaled(seperationDistance));
+    }
+  }
+
+  /*
   void setupCrosshair() async {
     crosshair = new SpriteComponent();
     crosshair.sprite = await Sprite.load('crosshair.png');
@@ -52,22 +74,39 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
     crosshair.anchor = Anchor.center;
     this.gameRef.add(this.crosshair);
   }
+   */
+
+  Future<void> invincibilityFrames() async {
+    Future.delayed(Duration(seconds: 1), () {
+      _currentlyInvincible = false;
+    });
+  }
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
 
-    if (other is CollidableObject) {
-      if (intersectionPoints.length == 2) {
-        final mid = ((intersectionPoints.elementAt(1) + intersectionPoints.elementAt(0)) / 2);
-
-        final collisionNormal = absoluteCenter - mid;
-        final seperationDistance = (size.x / 2) - collisionNormal.length;
-
-        setPlayerAndCrosshairPosition(collisionNormal.normalized().scaled(seperationDistance));
+    if (other is Door || other is Wall) {
+      handleImmovableCollision(intersectionPoints);
+    } else if (other is DoorArea) {
+      standingInDoorArea = true;
+      currentDoorArea = other;
+    } else if (other is Zombie) {
+      if (!_currentlyInvincible) {
+        hp--;
+        _currentlyInvincible = true;
+        invincibilityFrames();
+        print("player hp: ${hp}");
       }
     }
 
     super.onCollision(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(Collidable other) {
+    if (other is DoorArea) {
+      standingInDoorArea = false;
+    }
   }
 
   void setInvertedSprite() {
@@ -83,7 +122,7 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
   @override
   void update(double dt) {
     super.update(dt);
-    setPlayerAndCrosshairPosition(_moveDirection.normalized() * _speed * dt);
+    setPlayerPosition(_moveDirection.normalized() * _speed * dt);
   }
 
   void move(Set<LogicalKeyboardKey> keysPressed) {
@@ -131,9 +170,8 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
 
   Vector2 getMoveDirection() { return _moveDirection; }
 
-  void setPlayerAndCrosshairPosition(Vector2 movementVector) {
+  void setPlayerPosition(Vector2 movementVector) {
     this.position += movementVector;
-    this.crosshair.position += movementVector;
   }
 
 }

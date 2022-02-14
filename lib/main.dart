@@ -1,6 +1,6 @@
-import 'dart:math';
 
 import 'package:cod_zombies_2d/entities/player.dart';
+import 'package:cod_zombies_2d/entities/zombies.dart';
 import 'package:cod_zombies_2d/maps/gamemap.dart';
 import 'package:cod_zombies_2d/test.dart';
 import 'package:flame/components.dart';
@@ -20,6 +20,15 @@ void main() async {
 class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMovementDetector, TapDetector {
 
   late final Player player;
+
+  final List<Zombie> allZombies = [];
+  static int dynamicMaxZombieCountCap = 10;
+  static int hardMaxZombieCountCap = 60;
+  static int currentZombieCount = 0;
+
+  final int doorCost = 500;
+
+
 
   late final GameMap map;
 
@@ -48,27 +57,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   }
 
-  @override
-  void render(Canvas canvas) {
-
-    //Paint paint = new Paint();
-    //paint.color = Colors.redAccent;
-    //canvas.drawRect(Rect.largest, paint);
-    super.render(canvas);
-
-  }
-
-  @override
-  void resize(Vector2 newCanvasSize) {
-
-  }
-
-
-  @override
-  KeyEventResult onKeyEvent(
-      RawKeyEvent event,
-      Set<LogicalKeyboardKey> keysPressed,
-      ) {
+  void passKeyEventToPlayer(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
 
     switch (event.runtimeType) {
       case RawKeyDownEvent: {
@@ -81,6 +70,32 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
       }
     }
 
+  }
+
+  void handleOtherKeyEvents(Set<LogicalKeyboardKey> keysPressed) {
+
+    if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
+      if (this.player.standingInDoorArea && this.player.points >= doorCost) {
+        player.points -= doorCost;
+        player.currentDoorArea.boundingRooms.e1.activateMonsterSpawnpoints();
+        player.currentDoorArea.boundingRooms.e2.activateMonsterSpawnpoints();
+        remove(player.currentDoorArea.physicalDoor);
+        remove(player.currentDoorArea);
+
+      }
+    }
+
+  }
+
+  @override
+  KeyEventResult onKeyEvent(
+      RawKeyEvent event,
+      Set<LogicalKeyboardKey> keysPressed,
+      ) {
+
+    passKeyEventToPlayer(event, keysPressed);
+    handleOtherKeyEvents(keysPressed);
+
     return KeyEventResult.handled;
 
   }
@@ -89,7 +104,12 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
   bool onTapDown(TapDownInfo event) {
     Vector2 tapPosition = event.eventPosition.game;
 
-    this.add(new Test(tapPosition));
+    for (final Zombie zombie in allZombies) {
+      bool hitProcessed = zombie.onPlayerShoot(tapPosition);
+      if (hitProcessed) {
+        break;
+      }
+    }
 
     return true;
   }
@@ -106,20 +126,12 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
     double deltaX = pointerPositionX - playerPositionX;
 
-    setCursorPosition(pointerPosition);
 
     if (deltaX > 0) {
       this.player.setStandardSprite();
     } else {
       this.player.setInvertedSprite();
     }
-
-  }
-
-  void setCursorPosition(Vector2 pointerPosition) {
-
-    this.player.crosshair.x = pointerPosition.x;
-    this.player.crosshair.y = pointerPosition.y;
 
   }
 

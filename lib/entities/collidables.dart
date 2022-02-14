@@ -19,3 +19,4 @@ class CollidableObject extends PositionComponent with HasHitboxes, Collidable {
   }
 
 }
+
