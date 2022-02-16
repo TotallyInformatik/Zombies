@@ -61,8 +61,25 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/DungeonTilesetII.png
-    - assets/images/Knight.png
-    - assets/images/KnightInverted.png
+
+    - assets/images/KnightRun1.png
+    - assets/images/KnightRun2.png
+    - assets/images/KnightRun3.png
+    - assets/images/KnightRun4.png
+    - assets/images/KnightRunInverted1.png
+    - assets/images/KnightRunInverted2.png
+    - assets/images/KnightRunInverted3.png
+    - assets/images/KnightRunInverted4.png
+
+    - assets/images/KnightIdle1.png
+    - assets/images/KnightIdle2.png
+    - assets/images/KnightIdle3.png
+    - assets/images/KnightIdle4.png
+    - assets/images/KnightIdleInverted1.png
+    - assets/images/KnightIdleInverted2.png
+    - assets/images/KnightIdleInverted3.png
+    - assets/images/KnightIdleInverted4.png
+
     - assets/images/ZombieStandard.png
     - assets/images/crosshair.png
 

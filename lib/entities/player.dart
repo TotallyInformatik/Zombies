@@ -1,3 +1,4 @@
+import 'package:cod_zombies_2d/datastructures/pair.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/entities/zombies.dart';
 import 'package:cod_zombies_2d/main.dart';
@@ -8,14 +9,17 @@ import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/services.dart';
 
-class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable {
+enum PlayerFaceDirection {
+  LEFT,
+  RIGHT
+}
+
+class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable {
 
   static final int spriteHeight = 28;
   static final int spriteWidth = 16;
 
   Vector2 _moveDirection = Vector2.zero();
-  late final Sprite _standardSprite;
-  late final Sprite _invertedSprite;
 
   double _speed = 100;
   int hp = 3;
@@ -26,6 +30,20 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
 
   int points = 500;
   static final hitPointIncrease = 40;
+
+
+  /// movement status
+  bool _currentlyMoving = false;
+  PlayerFaceDirection _currentFaceDirection = PlayerFaceDirection.RIGHT;
+
+
+  /// animations
+  late final SpriteAnimation _standardRunAnimation;
+  late final SpriteAnimation _invertedRunAnimation;
+  late final SpriteAnimation _standardIdleAnimation;
+  late final SpriteAnimation _invertedIdleAnimation;
+
+  late final Map<Pair<bool, PlayerFaceDirection>, SpriteAnimation> movementStatusToSpriteAnimation;
 
   Player(double srcX, double srcY, double sizeRelation) :
         super(
@@ -41,10 +59,50 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
 
 
   Future<void> onLoad() async {
-    this._standardSprite = await Sprite.load('Knight.png');
-    this._invertedSprite = await Sprite.load('KnightInverted.png');
 
-    this.sprite = this._standardSprite;
+    List<Sprite> standardRunAnimationFrames = [
+      await Sprite.load('KnightRun1.png'),
+      await Sprite.load('KnightRun2.png'),
+      await Sprite.load('KnightRun3.png'),
+      await Sprite.load('KnightRun4.png')
+    ];
+
+    List<Sprite> invertedRunAnimationFrames = [
+      await Sprite.load('KnightRunInverted1.png'),
+      await Sprite.load('KnightRunInverted2.png'),
+      await Sprite.load('KnightRunInverted3.png'),
+      await Sprite.load('KnightRunInverted4.png')
+    ];
+
+    List<Sprite> standardIdleAnimationFrames = [
+      await Sprite.load('KnightIdle1.png'),
+      await Sprite.load('KnightIdle2.png'),
+      await Sprite.load('KnightIdle3.png'),
+      await Sprite.load('KnightIdle4.png')
+    ];
+
+    List<Sprite> invertedIdleAnimationFrames = [
+      await Sprite.load('KnightIdleInverted1.png'),
+      await Sprite.load('KnightIdleInverted2.png'),
+      await Sprite.load('KnightIdleInverted3.png'),
+      await Sprite.load('KnightIdleInverted4.png')
+    ];
+
+    this._standardRunAnimation = SpriteAnimation.spriteList(standardRunAnimationFrames, stepTime: 0.2);
+    this._invertedRunAnimation = SpriteAnimation.spriteList(invertedRunAnimationFrames, stepTime: 0.2);
+    this._standardIdleAnimation = SpriteAnimation.spriteList(standardIdleAnimationFrames, stepTime: 0.3);
+    this._invertedIdleAnimation = SpriteAnimation.spriteList(invertedIdleAnimationFrames, stepTime: 0.3);
+
+
+    movementStatusToSpriteAnimation = {
+      Pair(true, PlayerFaceDirection.RIGHT): _standardRunAnimation,
+      Pair(true, PlayerFaceDirection.LEFT): _invertedRunAnimation,
+      Pair(false, PlayerFaceDirection.RIGHT): _standardIdleAnimation,
+      Pair(false, PlayerFaceDirection.LEFT): _invertedIdleAnimation,
+    };
+
+    this.animation = this._standardIdleAnimation;
+
     this.anchor = Anchor.center;
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
@@ -109,15 +167,25 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
     }
   }
 
-  void setInvertedSprite() {
-    this.sprite = this._invertedSprite;
+  void setAnimation() {
+    animation = movementStatusToSpriteAnimation[Pair<bool, PlayerFaceDirection>(_currentlyMoving, _currentFaceDirection)];
+    print(movementStatusToSpriteAnimation.entries.first.key);
+    print(Pair(_currentlyMoving, _currentFaceDirection));
   }
 
-  void setStandardSprite() {
-    this.sprite = this._standardSprite;
+  void setFaceDirection(PlayerFaceDirection faceDirection) {
+    if (_currentFaceDirection != faceDirection) {
+      _currentFaceDirection = faceDirection;
+      setAnimation();
+    }
   }
 
-
+  void setCurrentlyMoving(bool currentlyMoving) {
+    if (_currentlyMoving != currentlyMoving) {
+      _currentlyMoving = currentlyMoving;
+      setAnimation();
+    }
+  }
 
   @override
   void update(double dt) {
@@ -126,42 +194,32 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
   }
 
   void move(Set<LogicalKeyboardKey> keysPressed) {
+    setCurrentlyMoving(true);
 
     Vector2 playerMoveDirection = new Vector2(0, 0);
 
-    if (keysPressed.contains(LogicalKeyboardKey.keyW)) {
-      playerMoveDirection.y -= 1;
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyS)) {
-      playerMoveDirection.y += 1;
-    }
+    if (keysPressed.contains(LogicalKeyboardKey.keyW)) { playerMoveDirection.y -= 1; }
+    if (keysPressed.contains(LogicalKeyboardKey.keyS)) { playerMoveDirection.y += 1; }
 
-    if (keysPressed.contains(LogicalKeyboardKey.keyD)) {
-      playerMoveDirection.x += 1;
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyA)) {
-      playerMoveDirection.x -= 1;
-    }
+    if (keysPressed.contains(LogicalKeyboardKey.keyD)) { playerMoveDirection.x += 1; }
+    if (keysPressed.contains(LogicalKeyboardKey.keyA)) { playerMoveDirection.x -= 1; }
 
-    this._moveDirection = playerMoveDirection;
+    _moveDirection = playerMoveDirection;
 
   }
 
   void stop(LogicalKeyboardKey key) {
-    Vector2 currentPlayerMoveDirection = this._moveDirection;
-    if (key == LogicalKeyboardKey.keyW) {
-      currentPlayerMoveDirection.y += 1;
-    }
-    if (key == LogicalKeyboardKey.keyS) {
-      currentPlayerMoveDirection.y -= 1;
-    }
-    if (key == LogicalKeyboardKey.keyA) {
-      currentPlayerMoveDirection.x += 1;
-    }
-    if (key == LogicalKeyboardKey.keyD) {
-      currentPlayerMoveDirection.x -= 1;
-    }
-    this._moveDirection = currentPlayerMoveDirection;
+    setCurrentlyMoving(false);
+
+    Vector2 currentPlayerMoveDirection = _moveDirection;
+
+    if (key == LogicalKeyboardKey.keyW) { currentPlayerMoveDirection.y += 1; }
+    if (key == LogicalKeyboardKey.keyS) { currentPlayerMoveDirection.y -= 1; }
+
+    if (key == LogicalKeyboardKey.keyA) { currentPlayerMoveDirection.x += 1; }
+    if (key == LogicalKeyboardKey.keyD) { currentPlayerMoveDirection.x -= 1; }
+
+    _moveDirection = currentPlayerMoveDirection;
   }
 
   void setMoveDirection(Vector2 newMoveDirection) {
@@ -171,7 +229,7 @@ class Player extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
   Vector2 getMoveDirection() { return _moveDirection; }
 
   void setPlayerPosition(Vector2 movementVector) {
-    this.position += movementVector;
+    position += movementVector;
   }
 
 }

@@ -26,7 +26,7 @@ class GameMap extends Component {
   };
 
   // areaToBoundingRooms gibt an, welche Räume (value) an welche doorAreas (key) angrenzen
-  final Map<int, Pair<int>> doorAreaToBoundingRooms = {
+  final Map<int, Pair<int, int>> doorAreaToBoundingRooms = {
     1: Pair(1, 2),
     2: Pair(1, 4),
     3: Pair(2, 3),
@@ -151,7 +151,7 @@ class GameMap extends Component {
     for (final doorAreaObject in doorAreasLayer.objects) {
 
       int doorAreaNumber = int.parse(doorAreaObject.name.split("_")[1]);
-      Pair<int> boundingRoomNumbers = doorAreaToBoundingRooms[doorAreaNumber]!;
+      Pair<int, int> boundingRoomNumbers = doorAreaToBoundingRooms[doorAreaNumber]!;
       Room boundingRoom1 = rooms["${roomPrefix}${boundingRoomNumbers.e1}"]!;
       Room boundingRoom2 = rooms["${roomPrefix}${boundingRoomNumbers.e2}"]!;
       Door correspondingPhysicalDoor = physicalDoors["${physicalDoorPrefix}${doorAreaNumber}"]!;
@@ -166,7 +166,7 @@ class GameMap extends Component {
             doorAreaObject.height
         ),
         correspondingPhysicalDoor,
-        Pair<Room>(boundingRoom1, boundingRoom2)
+        Pair<Room, Room>(boundingRoom1, boundingRoom2)
       );
       add(newDoorArea);
 

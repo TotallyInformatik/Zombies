@@ -2,7 +2,6 @@
 import 'package:cod_zombies_2d/entities/player.dart';
 import 'package:cod_zombies_2d/entities/zombies.dart';
 import 'package:cod_zombies_2d/maps/gamemap.dart';
-import 'package:cod_zombies_2d/test.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -128,9 +127,9 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
 
     if (deltaX > 0) {
-      this.player.setStandardSprite();
+      player.setFaceDirection(PlayerFaceDirection.RIGHT);
     } else {
-      this.player.setInvertedSprite();
+      player.setFaceDirection(PlayerFaceDirection.LEFT);
     }
 
   }

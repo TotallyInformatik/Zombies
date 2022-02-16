@@ -8,7 +8,7 @@ import 'package:flame/components.dart';
 class DoorArea extends CollidableObject with Collidable {
 
   late final Door physicalDoor;
-  late final Pair<Room> boundingRooms;
+  late final Pair<Room, Room> boundingRooms;
 
   DoorArea(Vector2 position, Vector2 size, this.physicalDoor, this.boundingRooms) : super(position, size);
 
