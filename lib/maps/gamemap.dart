@@ -1,9 +1,8 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
-import 'package:cod_zombies_2d/entities/collidables.dart';
-import 'package:cod_zombies_2d/entities/player.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
-import 'package:cod_zombies_2d/maps/door.dart';
-import 'package:cod_zombies_2d/maps/door_area.dart';
+import 'package:cod_zombies_2d/maps/door/door.dart';
+import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
 import 'package:cod_zombies_2d/maps/room.dart';
 import 'package:flame/components.dart';
@@ -62,6 +61,8 @@ class GameMap extends Component {
   late final int pixelWidth;
   late final int pixelHeight;
 
+  late NeatPeriodicTaskScheduler monsterSpawnpointActivityCheckTimer;
+
   GameMap(this.mapName) : super();
 
   @override
@@ -113,7 +114,7 @@ class GameMap extends Component {
 
   void _setupMonsterSpawnpointPeriodicDistanceCheck() {
 
-    NeatPeriodicTaskScheduler(
+    monsterSpawnpointActivityCheckTimer = NeatPeriodicTaskScheduler(
       interval: const Duration(seconds: 2),
       name: 'periodicMonsterSpawnpointCheck',
       timeout: const Duration(seconds: 1),
@@ -125,7 +126,9 @@ class GameMap extends Component {
 
       },
       minCycle: const Duration(seconds: 1),
-    ).start();
+    );
+
+    monsterSpawnpointActivityCheckTimer.start();
 
   }
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cod_zombies_2d/entities/zombies.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:flame/components.dart';
 import 'package:neat_periodic_task/neat_periodic_task.dart';
@@ -100,7 +100,7 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
 
   void _spawnZombie() {
     if (gameRef.currentZombieCount <= gameRef.dynamicMaxZombieCountCap) {
-      Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, "ZombieStandard.png", 3);
+      Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, 3);
       gameRef.add(newZombie);
       gameRef.allZombies.add(newZombie);
       gameRef.currentZombieCount++;

@@ -1,8 +1,10 @@
 import 'package:cod_zombies_2d/entities/bullet.dart';
-import 'package:cod_zombies_2d/entities/player.dart';
-import 'package:cod_zombies_2d/entities/zombies.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/maps/gamemap.dart';
+import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
 import 'package:cod_zombies_2d/ui/overlay_ui.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,9 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
   @override
   Future<void> onLoad() async {
 
+    await Flame.device.fullScreen();
+    await Flame.device.setLandscape();
+
     this.map = new GameMap("map2.tmx");
     await this.add(map);
 
@@ -55,11 +60,18 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   void endGame() {
 
+    /// removing all zombies
     for (final Zombie zombie in allZombies) {
       remove(zombie);
     }
     allZombies.clear();
     gameStatus = GameStatus.GAMEOVER;
+
+    /// stopping monster spawning
+    for (final MonsterSpawnpoint monsterSpawnpoint in map.monsterSpawnpoints.values) {
+      monsterSpawnpoint.setInactive();
+    }
+    map.monsterSpawnpointActivityCheckTimer.stop();
 
   }
 
@@ -78,18 +90,22 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   }
 
+  void playerUse() {
+    if (player.standingInDoorArea && player.points >= doorCost) {
+      player.points -= doorCost;
+      player.currentDoorArea.boundingRooms.e1.activateMonsterSpawnpoints();
+      player.currentDoorArea.boundingRooms.e2.activateMonsterSpawnpoints();
+      remove(player.currentDoorArea.physicalDoor);
+      remove(player.currentDoorArea);
+      ui.updatePoints();
+
+    }
+  }
+
   void _handleOtherKeyEvents(Set<LogicalKeyboardKey> keysPressed) {
 
     if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
-      if (this.player.standingInDoorArea && this.player.points >= doorCost) {
-        player.points -= doorCost;
-        player.currentDoorArea.boundingRooms.e1.activateMonsterSpawnpoints();
-        player.currentDoorArea.boundingRooms.e2.activateMonsterSpawnpoints();
-        remove(player.currentDoorArea.physicalDoor);
-        remove(player.currentDoorArea);
-        ui.updatePoints();
-
-      }
+      playerUse();
     }
 
   }

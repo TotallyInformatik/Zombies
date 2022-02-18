@@ -1,6 +1,6 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
 import 'package:cod_zombies_2d/entities/collidables.dart';
-import 'package:cod_zombies_2d/maps/door.dart';
+import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/room.dart';
 import 'package:flame/components.dart';
 

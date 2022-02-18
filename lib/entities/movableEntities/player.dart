@@ -1,9 +1,10 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
-import 'package:cod_zombies_2d/entities/zombies.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
-import 'package:cod_zombies_2d/maps/door.dart';
-import 'package:cod_zombies_2d/maps/door_area.dart';
+import 'package:cod_zombies_2d/maps/door/door.dart';
+import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
@@ -14,7 +15,7 @@ enum PlayerFaceDirection {
   RIGHT
 }
 
-class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable {
+class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable, MoveableEntity {
 
   static final int spriteHeight = 28;
   static final int spriteWidth = 16;
@@ -111,18 +112,6 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     return super.onLoad();
   }
 
-
-  void handleImmovableCollision(Set<Vector2> intersectionPoints) {
-    if (intersectionPoints.length == 2) {
-      final mid = ((intersectionPoints.elementAt(1) + intersectionPoints.elementAt(0)) / 2);
-
-      final collisionNormal = absoluteCenter - mid;
-      final seperationDistance = (size.x / 2) - collisionNormal.length;
-
-      setPlayerPosition(collisionNormal.normalized().scaled(seperationDistance));
-    }
-  }
-
   Future<void> invincibilityFrames() async {
     Future.delayed(Duration(seconds: 1), () {
       _currentlyInvincible = false;
@@ -146,6 +135,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     super.onCollision(intersectionPoints, other);
   }
 
+  @override
   void processHit() {
     hp--;
     gameRef.ui.updateHearts(hp);

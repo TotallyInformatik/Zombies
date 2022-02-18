@@ -1,5 +1,6 @@
-import 'package:cod_zombies_2d/entities/player.dart';
-import 'package:cod_zombies_2d/entities/zombies.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
