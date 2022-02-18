@@ -1,7 +1,7 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/entities/zombies.dart';
-import 'package:cod_zombies_2d/main.dart';
+import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door.dart';
 import 'package:cod_zombies_2d/maps/door_area.dart';
 import 'package:flame/components.dart';
@@ -21,7 +21,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
   Vector2 _moveDirection = Vector2.zero();
 
-  double _speed = 100;
+  double _speed = 80;
   int hp = 3;
   bool _currentlyInvincible = false;
 
@@ -107,7 +107,6 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
-    //this.setupCrosshair();
 
     return super.onLoad();
   }
@@ -123,16 +122,6 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       setPlayerPosition(collisionNormal.normalized().scaled(seperationDistance));
     }
   }
-
-  /*
-  void setupCrosshair() async {
-    crosshair = new SpriteComponent();
-    crosshair.sprite = await Sprite.load('crosshair.png');
-    crosshair.size = new Vector2(10, 10);
-    crosshair.anchor = Anchor.center;
-    this.gameRef.add(this.crosshair);
-  }
-   */
 
   Future<void> invincibilityFrames() async {
     Future.delayed(Duration(seconds: 1), () {
@@ -150,14 +139,29 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       currentDoorArea = other;
     } else if (other is Zombie) {
       if (!_currentlyInvincible) {
-        hp--;
-        _currentlyInvincible = true;
-        invincibilityFrames();
-        print("player hp: ${hp}");
+        processHit();
       }
     }
 
     super.onCollision(intersectionPoints, other);
+  }
+
+  void processHit() {
+    hp--;
+    gameRef.ui.updateHearts(hp);
+    _currentlyInvincible = true;
+    invincibilityFrames();
+
+    if (hp == 0) {
+      die();
+    }
+
+  }
+
+  void die() {
+
+    gameRef.endGame();
+
   }
 
   @override
@@ -169,8 +173,6 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
   void setAnimation() {
     animation = movementStatusToSpriteAnimation[Pair<bool, PlayerFaceDirection>(_currentlyMoving, _currentFaceDirection)];
-    print(movementStatusToSpriteAnimation.entries.first.key);
-    print(Pair(_currentlyMoving, _currentFaceDirection));
   }
 
   void setFaceDirection(PlayerFaceDirection faceDirection) {
@@ -190,6 +192,9 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (gameRef.gameStatus == GameStatus.GAMEOVER) return;
+
     setPlayerPosition(_moveDirection.normalized() * _speed * dt);
   }
 

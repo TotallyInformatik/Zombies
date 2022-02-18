@@ -8,6 +8,7 @@ import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
 import 'package:cod_zombies_2d/maps/room.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:neat_periodic_task/neat_periodic_task.dart';
 
 class GameMap extends Component {
 
@@ -110,6 +111,24 @@ class GameMap extends Component {
 
   }
 
+  void _setupMonsterSpawnpointPeriodicDistanceCheck() {
+
+    NeatPeriodicTaskScheduler(
+      interval: const Duration(seconds: 2),
+      name: 'periodicMonsterSpawnpointCheck',
+      timeout: const Duration(seconds: 1),
+      task: () async {
+
+        for (MonsterSpawnpoint spawnpoint in this.monsterSpawnpoints.values) {
+          spawnpoint.checkPlayerDistance();
+        }
+
+      },
+      minCycle: const Duration(seconds: 1),
+    ).start();
+
+  }
+
   void _setupWalls() {
 
     final wallsLayer = this.map.tileMap.getObjectGroupFromLayer("Walls");
@@ -176,12 +195,13 @@ class GameMap extends Component {
   
   void _setupMap() {
 
-    this._setupWalls();
-    this._setupSpawnpoints();
+    _setupWalls();
+    _setupSpawnpoints();
+    _setupMonsterSpawnpointPeriodicDistanceCheck();
 
-    this._setupRooms();
+    _setupRooms();
 
-    this._setupDoors();
+    _setupDoors();
 
   }
 

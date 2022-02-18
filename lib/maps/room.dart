@@ -8,7 +8,7 @@ class Room {
 
   void activateMonsterSpawnpoints() {
     this.monsterSpawnpoints.forEach((MonsterSpawnpoint spawnpoint) {
-      spawnpoint.setActive();
+      spawnpoint.activateMonsterSpawnpoint();
     });
   }
 

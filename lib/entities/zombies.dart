@@ -1,14 +1,19 @@
 import 'package:cod_zombies_2d/entities/player.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
-import 'package:cod_zombies_2d/main.dart';
+import 'package:cod_zombies_2d/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 
 class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<ZombiesGame> {
 
   final String spriteName;
-  final double _movementSpeed = 20;
+  final double _movementSpeed = 15;
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
+
+  final int _movementFrameInterval = 2;
+
+  double _accumulatedDt = 0;
+  double _accumulatedFrames = 0;
 
   int hp;
 
@@ -31,7 +36,16 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
 
   @override
   void update(double dt) {
-    followPlayer(dt);
+
+    _accumulatedFrames++;
+    _accumulatedDt += dt;
+
+    if (_accumulatedFrames > _movementFrameInterval) {
+      followPlayer(_accumulatedDt);
+      _accumulatedFrames = 0;
+      _accumulatedDt = 0;
+    }
+
 
     super.update(dt);
   }
@@ -42,7 +56,6 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
 
       final collisionNormal = absoluteCenter - mid;
       final seperationDistance = (size.x / 2) - collisionNormal.length;
-
 
       position += collisionNormal.normalized().scaled(seperationDistance);
     }
@@ -58,6 +71,7 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
     super.onCollision(intersectionPoints, other);
   }
 
+  /*
   bool onPlayerShoot(Vector2 cursorPosition) {
     HitboxShape currentHitbox = this.hitboxes[0];
 
@@ -81,9 +95,11 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
     return false;
 
   }
+   */
 
   void processHit() {
     gameRef.player.points += Player.hitPointIncrease;
+    gameRef.ui.updatePoints();
     hp--;
     if (hp <= 0) {
       removeOneself();
@@ -93,18 +109,16 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
   void removeOneself() {
     gameRef.remove(this);
     gameRef.allZombies.remove(this);
-    ZombiesGame.currentZombieCount--;
+    gameRef.currentZombieCount--;
   }
 
   void followPlayer(double dt) {
 
     Player player = gameRef.player;
-    double playerToZombieDeltaX = player.x - x;
-    double playerToZombieDeltaY = player.y - y;
 
     Vector2 movementVector = Vector2(
-      playerToZombieDeltaX,
-      playerToZombieDeltaY
+      player.x - x,
+      player.y - y
     );
 
     position += movementVector.normalized() * _movementSpeed * dt;
