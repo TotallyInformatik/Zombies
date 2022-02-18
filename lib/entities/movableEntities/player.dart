@@ -5,6 +5,7 @@ import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
+import 'package:cod_zombies_2d/maps/interactive_area.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
@@ -26,8 +27,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   int hp = 3;
   bool _currentlyInvincible = false;
 
-  bool standingInDoorArea = false;
-  late DoorArea currentDoorArea;
+  InteractiveArea? currentArea;
 
   int points = 500;
   static final hitPointIncrease = 40;
@@ -113,7 +113,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   }
 
   Future<void> invincibilityFrames() async {
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       _currentlyInvincible = false;
     });
   }
@@ -123,9 +123,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     if (other is Door || other is Wall) {
       handleImmovableCollision(intersectionPoints);
-    } else if (other is DoorArea) {
-      standingInDoorArea = true;
-      currentDoorArea = other;
+    } else if (other is InteractiveArea) {
+      currentArea = other;
     } else if (other is Zombie) {
       if (!_currentlyInvincible) {
         processHit();
@@ -150,14 +149,24 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
   void die() {
 
+    // TODO: set player animation to hit sprite
     gameRef.endGame();
 
   }
 
   @override
   void onCollisionEnd(Collidable other) {
-    if (other is DoorArea) {
-      standingInDoorArea = false;
+    if (other is InteractiveArea) {
+      currentArea = null;
+    }
+  }
+
+  void use() {
+
+    if (currentArea == null) return;
+
+    if (currentArea is InteractiveArea) {
+      currentArea!.onInteract();
     }
   }
 

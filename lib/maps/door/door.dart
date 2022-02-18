@@ -5,5 +5,4 @@ class Door extends CollidableObject with Collidable {
 
   Door(Vector2 position, Vector2 size) : super(position, size);
 
-
 }

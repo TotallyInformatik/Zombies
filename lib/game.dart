@@ -29,8 +29,6 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
   int dynamicMaxZombieCountCap = 5;
   int currentZombieCount = 0;
 
-  final int doorCost = 500;
-
   late final GameMap map;
 
   @override
@@ -75,11 +73,22 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   }
 
-  void _passKeyEventToPlayer(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  @override
+  KeyEventResult onKeyEvent(
+      RawKeyEvent event,
+      Set<LogicalKeyboardKey> keysPressed,
+      ) {
 
     switch (event.runtimeType) {
       case RawKeyDownEvent: {
-        player.move(keysPressed);
+
+        if (keysPressed.contains(LogicalKeyboardKey.keyW) ||
+            keysPressed.contains(LogicalKeyboardKey.keyS) ||
+            keysPressed.contains(LogicalKeyboardKey.keyA) ||
+            keysPressed.contains(LogicalKeyboardKey.keyD)) {
+          player.move(keysPressed);
+        }
+
         break;
       }
       case RawKeyUpEvent: {
@@ -88,53 +97,18 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
       }
     }
 
-  }
-
-  void playerUse() {
-    if (player.standingInDoorArea && player.points >= doorCost) {
-      player.points -= doorCost;
-      player.currentDoorArea.boundingRooms.e1.activateMonsterSpawnpoints();
-      player.currentDoorArea.boundingRooms.e2.activateMonsterSpawnpoints();
-      remove(player.currentDoorArea.physicalDoor);
-      remove(player.currentDoorArea);
-      ui.updatePoints();
-
-    }
-  }
-
-  void _handleOtherKeyEvents(Set<LogicalKeyboardKey> keysPressed) {
-
     if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
-      playerUse();
+      player.use();
     }
-
-  }
-
-  @override
-  KeyEventResult onKeyEvent(
-      RawKeyEvent event,
-      Set<LogicalKeyboardKey> keysPressed,
-      ) {
-
-    _passKeyEventToPlayer(event, keysPressed);
-    _handleOtherKeyEvents(keysPressed);
 
     return KeyEventResult.handled;
 
   }
 
   @override
-  bool onTapDown(TapDownInfo event) {
-    Vector2 tapPosition = event.eventPosition.game;
+  bool onTapDown(TapDownInfo info) {
+    Vector2 tapPosition = info.eventPosition.game;
 
-    /*
-    for (final Zombie zombie in allZombies) {
-      bool hitProcessed = zombie.onPlayerShoot(tapPosition);
-      if (hitProcessed) {
-        break;
-      }
-    }
-     */
 
     Vector2 bulletMovementVector = Vector2(
       tapPosition.x - player.x,
