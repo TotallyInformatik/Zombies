@@ -119,22 +119,6 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-
-    if (other is Door || other is Wall) {
-      handleImmovableCollision(intersectionPoints);
-    } else if (other is InteractiveArea) {
-      currentArea = other;
-    } else if (other is Zombie) {
-      if (!_currentlyInvincible) {
-        processHit();
-      }
-    }
-
-    super.onCollision(intersectionPoints, other);
-  }
-
-  @override
   void processHit() {
     hp--;
     gameRef.ui.updateHearts(hp);
@@ -152,6 +136,22 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     // TODO: set player animation to hit sprite
     gameRef.endGame();
 
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
+
+    if (other is Door || other is Wall) {
+      handleImmovableCollision(intersectionPoints);
+    } else if (other is InteractiveArea) {
+      currentArea = other;
+    } else if (other is Zombie) {
+      if (!_currentlyInvincible) {
+        processHit();
+      }
+    }
+
+    super.onCollision(intersectionPoints, other);
   }
 
   @override

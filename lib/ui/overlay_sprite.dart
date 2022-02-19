@@ -1,6 +1,7 @@
+import 'package:cod_zombies_2d/ui/overlay_component.dart';
 import 'package:flame/components.dart';
 
-class OverlaySprite extends SpriteComponent {
+class OverlaySprite extends SpriteComponent with OverlayComponent {
 
   OverlaySprite(Sprite sprite, Vector2 viewportPosition, double size) :
         super(
@@ -8,11 +9,5 @@ class OverlaySprite extends SpriteComponent {
           position: viewportPosition,
           size: Vector2(size, size)
         );
-
-  @override
-  Future<void>? onLoad() {
-    positionType = PositionType.viewport;
-    return super.onLoad();
-  }
-
+  
 }

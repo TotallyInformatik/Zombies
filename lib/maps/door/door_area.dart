@@ -8,8 +8,11 @@ import 'package:cod_zombies_2d/maps/room.dart';
 import 'package:flame/components.dart';
 
 
-class DoorArea extends CollidableObject with Collidable, InteractiveArea, HasGameRef<ZombiesGame> {
+class DoorArea extends CollidableObject with Collidable, HasGameRef<ZombiesGame> implements InteractiveArea {
 
+
+  @override
+  String tooltip = "press F to open door";
   late final Door physicalDoor;
   late final Pair<Room, Room> boundingRooms;
 

@@ -15,7 +15,6 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
   final double heartSize = 20;
 
   final double coinSize = 15;
-  final TextPaint _textRenderer = TextPaint(style: GoogleFonts.getFont("Patrick Hand SC").copyWith(fontSize: 12, color: Colors.white));
 
 
   @override
@@ -29,6 +28,7 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
 
   void _setupOverlayUI() async {
 
+    /// player hp
     _fullHeartSprite = await Sprite.load("HeartFull.png");
     _emptyHeartSprite = await Sprite.load("HeartEmpty.png");
 
@@ -40,12 +40,11 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
       gameRef.add(newHeartSprite);
     }
 
+    /// player points
     _coinSprite =
       OverlaySprite(await Sprite.load("Coin.png"), Vector2(0, heartSize), coinSize);
 
     gameRef.add(_coinSprite);
-
-
     _pointsText =
       TextComponent(
         text: "Points: ${gameRef.player.points}",
@@ -54,9 +53,17 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
       );
 
     _pointsText.positionType = PositionType.viewport;
-    _pointsText.anchor = Anchor.topLeft;
 
     gameRef.add(_pointsText);
+
+    /// tooltip
+    _tooltip = TextComponent(
+
+    );
+
+  }
+
+  void showTooltip() {
 
   }
 
