@@ -9,8 +9,9 @@ class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
 
   final Vector2 normalizedMovementVector;
   final double _speed = 200;
+  final int _damage;
 
-  Bullet(this.normalizedMovementVector, Vector2 playerPosition) :
+  Bullet(this.normalizedMovementVector, this._damage, Vector2 playerPosition) :
         super(
           position: playerPosition,
           size: Vector2.all(5)
@@ -33,12 +34,12 @@ class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
 
   handleCollision(Collidable other) {
 
-    if (other is! Player) {
+    if (other is! Player && other is! Bullet) {
       gameRef.remove(this);
     }
 
     if (other is Zombie) {
-      other.processHit();
+      other.processHit(_damage);
     }
 
   }

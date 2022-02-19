@@ -108,15 +108,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
   @override
   bool onTapDown(TapDownInfo info) {
     Vector2 tapPosition = info.eventPosition.game;
-
-
-    Vector2 bulletMovementVector = Vector2(
-      tapPosition.x - player.x,
-      tapPosition.y - player.y
-    );
-
-    Bullet bullet = Bullet(bulletMovementVector.normalized(), player.position);
-    add(bullet);
+    player.shoot(tapPosition);
 
     return true;
   }

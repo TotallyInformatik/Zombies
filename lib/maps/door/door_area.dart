@@ -20,22 +20,19 @@ class DoorArea extends CollidableObject with Collidable, HasGameRef<ZombiesGame>
 
   DoorArea(Vector2 position, Vector2 size, this.physicalDoor, this.boundingRooms) : super(position, size);
 
-
   @override
   void onInteract() {
 
     Player player = gameRef.player;
 
-    if (player.points >= doorCost) {
+    if (player.points < doorCost) return;
 
-      player.points -= doorCost;
-      boundingRooms.e1.activateMonsterSpawnpoints();
-      boundingRooms.e2.activateMonsterSpawnpoints();
-      gameRef.remove(physicalDoor);
-      gameRef.remove(this);
-      gameRef.ui.updatePoints();
+    player.changePoints(-doorCost);
+    boundingRooms.e1.activateMonsterSpawnpoints();
+    boundingRooms.e2.activateMonsterSpawnpoints();
+    gameRef.remove(physicalDoor);
+    gameRef.remove(this);
 
-    }
 
   }
 

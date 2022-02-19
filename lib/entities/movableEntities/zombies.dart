@@ -10,8 +10,7 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
 
   static final standardZombieSprite = Sprite.load("ZombieStandard.png");
 
-  //final String spriteName;
-  final double _movementSpeed = 15;
+  final double _movementSpeed = 30;
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
 
   final int _movementFrameInterval = 1;
@@ -66,10 +65,9 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
   }
 
   @override
-  void processHit() {
-    hp--;
-    gameRef.player.points += Player.hitPointIncrease;
-    gameRef.ui.updatePoints();
+  void processHit(int dHealth) {
+    hp -= dHealth;
+    gameRef.player.changePoints(Player.hitPointIncrease);
     if (hp <= 0) {
       removeOneself();
     }

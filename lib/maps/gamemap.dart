@@ -4,9 +4,14 @@ import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
+import 'package:cod_zombies_2d/maps/perks/double_tap.dart';
+import 'package:cod_zombies_2d/maps/perks/juggernog.dart';
+import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
+import 'package:cod_zombies_2d/maps/perks/quick_revive.dart';
 import 'package:cod_zombies_2d/maps/room.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:neat_periodic_task/neat_periodic_task.dart';
 
 class GameMap extends Component {
@@ -52,6 +57,11 @@ class GameMap extends Component {
   final Map<String, Room> rooms = {};
   final Map<String, Door> physicalDoors = {};
 
+  final String quickReviveTag = "quick_revive";
+  final String muleKickTag = "mule_kick";
+  final String doubleTapTag = "double_tap";
+  final String juggernogTag = "juggernog";
+
   late final TiledComponent map;
 
   late final int mapWidth;
@@ -94,7 +104,7 @@ class GameMap extends Component {
 
   void _setupSpawnpoints() {
 
-    final spawnPointsLayer = this.map.tileMap.getObjectGroupFromLayer("Spawnpoints");
+    final spawnPointsLayer = map.tileMap.getObjectGroupFromLayer("Spawnpoints");
     
     for (final spawnPoint in spawnPointsLayer.objects) {
       switch (spawnPoint.type) {
@@ -134,7 +144,7 @@ class GameMap extends Component {
 
   void _setupWalls() {
 
-    final wallsLayer = this.map.tileMap.getObjectGroupFromLayer("Walls");
+    final wallsLayer = map.tileMap.getObjectGroupFromLayer("Walls");
 
     for (final wall in wallsLayer.objects) {
       final collidableWall = Wall(
@@ -148,7 +158,7 @@ class GameMap extends Component {
 
   void _setupDoors() {
 
-    final physicalDoorsLayer = this.map.tileMap.getObjectGroupFromLayer("PhysicalDoors");
+    final physicalDoorsLayer = map.tileMap.getObjectGroupFromLayer("PhysicalDoors");
 
     for (final physicalDoorObject in physicalDoorsLayer.objects) {
 
@@ -168,7 +178,7 @@ class GameMap extends Component {
 
     }
 
-    final doorAreasLayer = this.map.tileMap.getObjectGroupFromLayer("DoorAreas");
+    final doorAreasLayer = map.tileMap.getObjectGroupFromLayer("DoorAreas");
 
     for (final doorAreaObject in doorAreasLayer.objects) {
 
@@ -195,14 +205,48 @@ class GameMap extends Component {
     }
 
   }
+
+  void _setupPerks() {
+
+    final perkAreaLayer = map.tileMap.getObjectGroupFromLayer("PerkAreas");
+
+    for (final perkArea in perkAreaLayer.objects) {
+
+      PerkArea area = QuickRevive(Vector2.zero(), Vector2.zero());
+      String perkType = perkArea.type;
+      Vector2 perkAreaPosition = Vector2(
+        perkArea.x,
+        perkArea.y
+      );
+      Vector2 perkAreaSize = Vector2(
+        perkArea.width,
+        perkArea.height
+      );
+
+      if (perkType == quickReviveTag) {
+        area = QuickRevive(perkAreaPosition, perkAreaSize);
+      } else if (perkType == muleKickTag) {
+        area = QuickRevive(perkAreaPosition, perkAreaSize);
+      } else if (perkType == juggernogTag) {
+        area = Juggernog(perkAreaPosition, perkAreaSize);
+      } else if (perkType == doubleTapTag) {
+        area = DoubleTap(perkAreaPosition, perkAreaSize);
+      }
+
+      add(area);
+
+    }
+
+  }
   
   void _setupMap() {
 
     _setupWalls();
     _setupSpawnpoints();
     _setupMonsterSpawnpointPeriodicDistanceCheck();
-
     _setupRooms();
+
+    _setupPerks();
 
     _setupDoors();
 

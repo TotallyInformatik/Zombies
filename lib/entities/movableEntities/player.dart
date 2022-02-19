@@ -1,4 +1,5 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
+import 'package:cod_zombies_2d/entities/bullet.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
@@ -6,6 +7,7 @@ import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/interactive_area.dart';
+import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
@@ -21,19 +23,28 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   static final int spriteHeight = 28;
   static final int spriteWidth = 16;
 
-  Vector2 _moveDirection = Vector2.zero();
+  static final hitPointIncrease = 40;
 
-  double _speed = 80;
-  int hp = 3;
+
+  /// player game attributes
+  final double _speed = 80;
+  final int _damage = 1;
+  final int _weaponCount = 2;
+  int points = 500;
+
+  /// health
+  int maximumHealthPoints = 3;
+  int currentHealthPoints = 3;
   bool _currentlyInvincible = false;
 
   InteractiveArea? currentArea;
 
-  int points = 500;
-  static final hitPointIncrease = 40;
+  /// perks
+  List<Perks> posessedPerks = [];
 
 
   /// movement status
+  Vector2 _moveDirection = Vector2.zero();
   bool _currentlyMoving = false;
   PlayerFaceDirection _currentFaceDirection = PlayerFaceDirection.RIGHT;
 
@@ -119,23 +130,44 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   }
 
   @override
-  void processHit() {
-    hp--;
-    gameRef.ui.updateHearts(hp);
+  void processHit(int dHealth) {
+    currentHealthPoints -= dHealth;
+    gameRef.ui.updateHearts(currentHealthPoints);
     _currentlyInvincible = true;
     invincibilityFrames();
 
-    if (hp == 0) {
+    if (currentHealthPoints == 0) {
       die();
     }
 
   }
 
+
+  void revive() {
+    posessedPerks.clear();
+    deactivateJuggernog();
+  }
+
   void die() {
+
+    if (posessedPerks.contains(Perks.QUICK_REVIVE)) {
+      revive();
+      return;
+    }
 
     // TODO: set player animation to hit sprite
     gameRef.endGame();
 
+  }
+
+  void enterArea(InteractiveArea area) {
+    currentArea = area;
+    gameRef.ui.showTooltip(area.tooltip);
+  }
+
+  void exitArea() {
+    currentArea = null;
+    gameRef.ui.showTooltip("");
   }
 
   @override
@@ -144,10 +176,10 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     if (other is Door || other is Wall) {
       handleImmovableCollision(intersectionPoints);
     } else if (other is InteractiveArea) {
-      currentArea = other;
+      enterArea(other);
     } else if (other is Zombie) {
       if (!_currentlyInvincible) {
-        processHit();
+        processHit(1);
       }
     }
 
@@ -157,7 +189,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   @override
   void onCollisionEnd(Collidable other) {
     if (other is InteractiveArea) {
-      currentArea = null;
+      exitArea();
     }
   }
 
@@ -167,7 +199,27 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     if (currentArea is InteractiveArea) {
       currentArea!.onInteract();
+      exitArea();
     }
+  }
+
+  void shoot(Vector2 tapPosition) {
+    Vector2 bulletMovementVector = Vector2(
+        tapPosition.x - x,
+        tapPosition.y - y
+    );
+
+    int damage = _damage;
+    if (posessedPerks.contains(Perks.DOUBLE_TAP)) damage *= 2;
+
+    Bullet bullet = Bullet(bulletMovementVector.normalized(), damage, position);
+    gameRef.add(bullet);
+
+  }
+
+  void changePoints(int dPoints) {
+    points += dPoints;
+    gameRef.ui.updatePoints();
   }
 
   void setAnimation() {
@@ -235,5 +287,20 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   void setPlayerPosition(Vector2 movementVector) {
     position += movementVector;
   }
+
+  /// perks
+  void activateJuggernog() {
+    currentHealthPoints = 5;
+    maximumHealthPoints = 5;
+    gameRef.ui.updateMaximumHearts();
+    gameRef.ui.updateHearts(currentHealthPoints);
+  }
+  void deactivateJuggernog() {
+    currentHealthPoints = 3;
+    maximumHealthPoints = 3;
+    gameRef.ui.updateMaximumHearts();
+    gameRef.ui.updateHearts(currentHealthPoints);
+  }
+
 
 }

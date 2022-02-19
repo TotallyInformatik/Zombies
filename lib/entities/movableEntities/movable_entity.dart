@@ -13,6 +13,6 @@ mixin MoveableEntity on HasHitboxes, Collidable {
     }
   }
 
-  void processHit();
+  void processHit(int dHealth);
 
 }
