@@ -1,11 +1,13 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
+import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
 import 'package:cod_zombies_2d/maps/perks/double_tap.dart';
 import 'package:cod_zombies_2d/maps/perks/juggernog.dart';
+import 'package:cod_zombies_2d/maps/perks/mule_kick.dart';
 import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
 import 'package:cod_zombies_2d/maps/perks/quick_revive.dart';
 import 'package:cod_zombies_2d/maps/room.dart';
@@ -14,7 +16,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:neat_periodic_task/neat_periodic_task.dart';
 
-class GameMap extends Component {
+class GameMap extends Component with HasGameRef<ZombiesGame> {
 
   // data section:
   // roomToMonsterSpawnpoint gibt an, in welchen Räumen (key) welche monsterSpawnpoints (value) sind
@@ -156,8 +158,9 @@ class GameMap extends Component {
 
   }
 
-  void _setupDoors() {
+  void _setupDoors() async {
 
+    /// setting up actual physical doors with collision boxes
     final physicalDoorsLayer = map.tileMap.getObjectGroupFromLayer("PhysicalDoors");
 
     for (final physicalDoorObject in physicalDoorsLayer.objects) {
@@ -178,6 +181,40 @@ class GameMap extends Component {
 
     }
 
+    /// setting up spike sprites
+    Map<int, List<SpriteComponent>> doorAreaNumberToSpriteComponent = {};
+
+    Sprite spike = await Sprite.load("FloorSpikes.png");
+    for (int i=1; i<10; i++) {
+
+      final doorArea = map.tileMap.getObjectGroupFromLayer("Door${i}");
+      List<SpriteComponent> currentDoorSprites = [];
+
+      for (final doorAreaObject in doorArea.objects) {
+
+        SpriteComponent currentSprite = SpriteComponent(
+          sprite: spike,
+          position: Vector2(
+              doorAreaObject.x,
+              doorAreaObject.y
+          ),
+          size: Vector2(
+              doorAreaObject.width,
+              doorAreaObject.height
+          ),
+        );
+
+        gameRef.add(currentSprite);
+        currentDoorSprites.add(currentSprite);
+
+      }
+
+      doorAreaNumberToSpriteComponent[i] = currentDoorSprites;
+
+    }
+
+
+    /// setting up the interactive areas for doors
     final doorAreasLayer = map.tileMap.getObjectGroupFromLayer("DoorAreas");
 
     for (final doorAreaObject in doorAreasLayer.objects) {
@@ -198,7 +235,8 @@ class GameMap extends Component {
             doorAreaObject.height
         ),
         correspondingPhysicalDoor,
-        Pair<Room, Room>(boundingRoom1, boundingRoom2)
+        Pair<Room, Room>(boundingRoom1, boundingRoom2),
+        doorAreaNumberToSpriteComponent[doorAreaNumber]!
       );
       add(newDoorArea);
 
@@ -226,7 +264,7 @@ class GameMap extends Component {
       if (perkType == quickReviveTag) {
         area = QuickRevive(perkAreaPosition, perkAreaSize);
       } else if (perkType == muleKickTag) {
-        area = QuickRevive(perkAreaPosition, perkAreaSize);
+        area = MuleKick(perkAreaPosition, perkAreaSize);
       } else if (perkType == juggernogTag) {
         area = Juggernog(perkAreaPosition, perkAreaSize);
       } else if (perkType == doubleTapTag) {
@@ -238,7 +276,13 @@ class GameMap extends Component {
     }
 
   }
-  
+
+  void _setupWeapons() {
+
+    final weaponAreaLayer = map.tileMap.getObjectGroupFromLayer("WeaponAreas");
+
+  }
+
   void _setupMap() {
 
     _setupWalls();
@@ -247,6 +291,7 @@ class GameMap extends Component {
     _setupRooms();
 
     _setupPerks();
+    _setupWeapons();
 
     _setupDoors();
 

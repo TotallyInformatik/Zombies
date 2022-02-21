@@ -8,6 +8,7 @@ import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/interactive_area.dart';
 import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
+import 'package:cod_zombies_2d/maps/weapons/weapon.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
@@ -28,8 +29,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
   /// player game attributes
   final double _speed = 80;
-  final int _damage = 1;
-  final int _weaponCount = 2;
+  int playerDamageFactor = 1;
   int points = 500;
 
   /// health
@@ -40,7 +40,12 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   InteractiveArea? currentArea;
 
   /// perks
-  List<Perks> posessedPerks = [];
+  List<Perks> possessedPerks = [];
+
+  /// weapons
+  int maxWeaponCount = 2;
+  int currentActiveWeaponIndex = 0;
+  List<Weapon> weapons = [];
 
 
   /// movement status
@@ -100,10 +105,13 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       await Sprite.load('KnightIdleInverted4.png')
     ];
 
-    this._standardRunAnimation = SpriteAnimation.spriteList(standardRunAnimationFrames, stepTime: 0.2);
-    this._invertedRunAnimation = SpriteAnimation.spriteList(invertedRunAnimationFrames, stepTime: 0.2);
-    this._standardIdleAnimation = SpriteAnimation.spriteList(standardIdleAnimationFrames, stepTime: 0.3);
-    this._invertedIdleAnimation = SpriteAnimation.spriteList(invertedIdleAnimationFrames, stepTime: 0.3);
+    _standardRunAnimation = SpriteAnimation.spriteList(standardRunAnimationFrames, stepTime: 0.2);
+    _invertedRunAnimation = SpriteAnimation.spriteList(invertedRunAnimationFrames, stepTime: 0.2);
+    _standardIdleAnimation = SpriteAnimation.spriteList(standardIdleAnimationFrames, stepTime: 0.3);
+    _invertedIdleAnimation = SpriteAnimation.spriteList(invertedIdleAnimationFrames, stepTime: 0.3);
+
+    animation = _standardIdleAnimation;
+
 
 
     movementStatusToSpriteAnimation = {
@@ -113,9 +121,9 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       Pair(false, PlayerFaceDirection.LEFT): _invertedIdleAnimation,
     };
 
-    this.animation = this._standardIdleAnimation;
+    anchor = Anchor.center;
 
-    this.anchor = Anchor.center;
+    weapons.add(await starterWeapon());
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
@@ -144,13 +152,13 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
 
   void revive() {
-    posessedPerks.clear();
+    possessedPerks.clear();
     deactivateJuggernog();
   }
 
   void die() {
 
-    if (posessedPerks.contains(Perks.QUICK_REVIVE)) {
+    if (possessedPerks.contains(Perks.QUICK_REVIVE)) {
       revive();
       return;
     }
@@ -203,17 +211,16 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     }
   }
 
-  void shoot(Vector2 tapPosition) {
+  void shoot(Vector2 tapPosition) async {
     Vector2 bulletMovementVector = Vector2(
         tapPosition.x - x,
         tapPosition.y - y
     );
 
-    int damage = _damage;
-    if (posessedPerks.contains(Perks.DOUBLE_TAP)) damage *= 2;
-
-    Bullet bullet = Bullet(bulletMovementVector.normalized(), damage, position);
+    // TODO: this does not work... must make individual classes for specific instantiation of bullets
+    Bullet bullet = weapons[currentActiveWeaponIndex].weaponBullet;
     gameRef.add(bullet);
+    bullet.onAdd(bulletMovementVector.normalized());
 
   }
 

@@ -16,7 +16,6 @@ abstract class PerkArea extends CollidableObject with Collidable, HasGameRef<Zom
   @override
   String tooltip;
   abstract Perks perkType;
-  abstract int cost;
 
   PerkArea(Vector2 position, Vector2 size, this.tooltip) : super(position, size);
 
@@ -25,7 +24,7 @@ abstract class PerkArea extends CollidableObject with Collidable, HasGameRef<Zom
     Player player = gameRef.player;
 
     player.changePoints(-cost);
-    gameRef.player.posessedPerks.add(perkType);
+    player.possessedPerks.add(perkType);
 
     gameRef.remove(this);
   }

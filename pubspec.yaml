@@ -81,6 +81,8 @@ flutter:
     - assets/images/KnightIdleInverted3.png
     - assets/images/KnightIdleInverted4.png
 
+    - assets/images/FloorSpikes.png
+
     - assets/images/HeartFull.png
     - assets/images/HeartEmpty.png
     - assets/images/Coin.png

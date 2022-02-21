@@ -5,6 +5,8 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// TODO: add ui for purchased perks
+
 class OverlayUI extends Component with HasGameRef<ZombiesGame> {
 
   late final Sprite _fullHeartSprite;

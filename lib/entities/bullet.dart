@@ -7,23 +7,26 @@ import 'package:flame/geometry.dart';
 
 class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable {
 
-  final Vector2 normalizedMovementVector;
+  late Vector2 normalizedMovementVector;
   final double _speed = 200;
-  final int _damage;
+  int _damage;
 
-  Bullet(this.normalizedMovementVector, this._damage, Vector2 playerPosition) :
+  Bullet(this._damage, Sprite sprite, Vector2 size) :
         super(
-          position: playerPosition,
-          size: Vector2.all(5)
+          sprite: sprite,
+          size: size
         );
 
   @override
   Future<void>? onLoad() async {
-
-    sprite = await Sprite.load("crosshair.png");
     addHitbox(HitboxCircle());
-
     return super.onLoad();
+  }
+
+  /// should always be called before adding this component
+  void onAdd(Vector2 pNormalizedMovementVector) {
+    position = gameRef.player.position;
+    normalizedMovementVector = pNormalizedMovementVector;
   }
 
   @override
@@ -39,7 +42,7 @@ class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
     }
 
     if (other is Zombie) {
-      other.processHit(_damage);
+      other.processHit(_damage * gameRef.player.playerDamageFactor);
     }
 
   }

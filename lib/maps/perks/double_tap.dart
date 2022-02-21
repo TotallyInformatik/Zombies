@@ -19,8 +19,9 @@ class DoubleTap extends PerkArea {
     Player player = gameRef.player;
 
     if (player.points < cost) return;
-    if (gameRef.player.posessedPerks.contains(perkType)) return;
+    if (player.possessedPerks.contains(perkType)) return;
 
+    player.playerDamageFactor = 2;
     super.onInteract();
   }
 }

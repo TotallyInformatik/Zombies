@@ -100,7 +100,7 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
 
   void _spawnZombie() {
     if (gameRef.currentZombieCount <= gameRef.dynamicMaxZombieCountCap) {
-      Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, 3);
+      Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, 5);
       gameRef.add(newZombie);
       gameRef.allZombies.add(newZombie);
       gameRef.currentZombieCount++;
