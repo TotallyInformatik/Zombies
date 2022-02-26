@@ -10,6 +10,7 @@ import 'package:cod_zombies_2d/maps/interactive_area.dart';
 import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
 import 'package:cod_zombies_2d/maps/weapons/weapon.dart';
 import 'package:flame/components.dart';
+import 'package:flame/game.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/services.dart';
@@ -137,6 +138,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
 
+    gameRef.gameStatus = GameStatus.PLAYING;
     return super.onLoad();
   }
 

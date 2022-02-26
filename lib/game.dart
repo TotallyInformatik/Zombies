@@ -13,12 +13,13 @@ import 'package:flame/extensions.dart';
 
 enum GameStatus {
   PLAYING,
-  GAMEOVER
+  GAMEOVER,
+  LOADING
 }
 
 class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMovementDetector, TapDetector {
 
-  GameStatus gameStatus = GameStatus.PLAYING;
+  GameStatus gameStatus = GameStatus.LOADING;
 
   late final Player player;
   late final OverlayUI ui;
@@ -37,10 +38,10 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
     await Flame.device.fullScreen();
     await Flame.device.setLandscape();
 
-    this.map = new GameMap("map2.tmx");
-    await this.add(map);
+    map = new GameMap("map2.tmx");
+    await add(map);
 
-    this.player = this.map.player;
+    player = map.player;
 
     camera.viewport = FixedResolutionViewport(
         Vector2(465, 270)
@@ -79,6 +80,8 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
       Set<LogicalKeyboardKey> keysPressed,
       ) {
 
+    if (gameStatus != GameStatus.PLAYING) return KeyEventResult.ignored;
+
     switch (event.runtimeType) {
       case RawKeyDownEvent: {
 
@@ -107,6 +110,9 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   @override
   bool onTapDown(TapDownInfo info) {
+
+    if (gameStatus != GameStatus.PLAYING) return false;
+
     Vector2 tapPosition = info.eventPosition.game;
     player.shoot(tapPosition);
 
@@ -115,6 +121,8 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   @override
   void onMouseMove(PointerHoverInfo info) {
+
+    if (gameStatus != GameStatus.PLAYING) return;
 
     Vector2 pointerPosition = info.eventPosition.game;
 

@@ -111,8 +111,8 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
     for (final spawnPoint in spawnPointsLayer.objects) {
       switch (spawnPoint.type) {
         case "player":
-          this.player = new Player(spawnPoint.x, spawnPoint.y, spawnPoint.width / Player.spriteHeight * 1.5);
-          this.add(this.player);
+          player = Player(spawnPoint.x, spawnPoint.y, spawnPoint.width / Player.spriteHeight * 1.5);
+          add(player);
           break;
         case "monster":
           MonsterSpawnpoint monsterSpawnpoint = new MonsterSpawnpoint(spawnPoint.x, spawnPoint.y, spawnPoint.width, spawnPoint.height, spawnPoint.name);

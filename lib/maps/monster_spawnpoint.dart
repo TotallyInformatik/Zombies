@@ -84,7 +84,6 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
   }
 
   void activateMonsterSpawnpoint() {
-    // TODO: make durations fixed as tiled map property!!!
 
     if (!activated) {
 
@@ -99,12 +98,15 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
 
 
   void _spawnZombie() {
-    if (gameRef.currentZombieCount <= gameRef.dynamicMaxZombieCountCap) {
-      Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, 5);
-      gameRef.add(newZombie);
-      gameRef.allZombies.add(newZombie);
-      gameRef.currentZombieCount++;
-    }
+
+    if (gameRef.gameStatus != GameStatus.PLAYING) return;
+    if (gameRef.currentZombieCount > gameRef.dynamicMaxZombieCountCap) return;
+
+    Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, 5);
+    gameRef.add(newZombie);
+    gameRef.allZombies.add(newZombie);
+    gameRef.currentZombieCount++;
+
   }
 
 }
