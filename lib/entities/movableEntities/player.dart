@@ -13,6 +13,7 @@ import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/services.dart';
+import 'package:neat_periodic_task/neat_periodic_task.dart';
 
 enum PlayerFaceDirection {
   LEFT,
@@ -46,6 +47,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   int maxWeaponCount = 2;
   int currentActiveWeaponIndex = 0;
   List<Weapon> weapons = [];
+  bool _canShoot = true;
 
 
   /// movement status
@@ -218,15 +220,31 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     }
   }
 
+  /// this function is called after the player successfully shoots, so as
+  /// to delay the next shot via the [_canShoot] attribute
+  Future<void> delayNextShot() async {
+
+    Future.delayed(Duration(milliseconds: weapons[currentActiveWeaponIndex].weaponShootDelayInMiliseconds))
+        .then((value) => {
+          _canShoot = true
+    });
+  }
+
   void shoot(Vector2 tapPosition) async {
+
+    if (!_canShoot) return;
+
+
     Vector2 bulletMovementVector = Vector2(
         tapPosition.x - x,
         tapPosition.y - y
     );
 
-    // TODO: this does not work... must make individual classes for specific instantiation of bullets
     BulletTypes bulletType = weapons[currentActiveWeaponIndex].weaponBullet;
-    gameRef.add(returnBulletFromBulletType(bulletType, bulletMovementVector.normalized()));
+    gameRef.add(returnBulletFromBulletType(bulletType, position, bulletMovementVector.normalized()));
+
+    _canShoot = false;
+    delayNextShot();
 
   }
 

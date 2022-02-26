@@ -86,6 +86,9 @@ flutter:
     - assets/images/ZombieRun3.png
     - assets/images/ZombieRun4.png
 
+    - assets/images/WeaponArrow.png
+    - assets/images/WeaponBow.png
+
     - assets/images/FloorSpikes.png
 
     - assets/images/HeartFull.png

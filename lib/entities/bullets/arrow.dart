@@ -1,9 +1,10 @@
-import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
-import 'package:flame/geometry.dart';
-import 'package:flame/src/sprite.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'dart:math';
 
-class Arrow extends Bullet {
+import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
+import 'package:flame/components.dart';
+import 'package:flame/geometry.dart';
+
+class Arrow extends Bullet with Collidable {
 
   @override
   int damage = 1;
@@ -11,12 +12,26 @@ class Arrow extends Bullet {
   @override
   double speed = 100;
 
-  Arrow(Vector2 normalizedMovementVector) : super(
+  Arrow(Vector2 srcPosition, Vector2 normalizedMovementVector) : super(
+    srcPosition,
     Vector2(
-      12, 4
+      4, 12
     ),
     normalizedMovementVector
   );
+
+  @override
+  Future<void>? onLoad() {
+
+    angle = atan(normalizedMovementVector.y / normalizedMovementVector.x);
+    if (normalizedMovementVector.x > 0) {
+      angle += pi/2;
+    } else {
+      angle -= pi/2;
+    }
+
+    return super.onLoad();
+  }
 
   @override
   Future<void> loadSprite() async {
@@ -26,6 +41,18 @@ class Arrow extends Bullet {
   @override
   Future<void> loadHitbox() async {
     addHitbox(HitboxRectangle());
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
+    handleCollision(other);
+    super.onCollision(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(Collidable other) {
+    handleCollision(other);
+    super.onCollisionEnd(other);
   }
 
 }

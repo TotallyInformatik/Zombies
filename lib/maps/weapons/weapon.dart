@@ -1,4 +1,3 @@
-import 'package:cod_zombies_2d/entities/bullets/arrow.dart';
 import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
 import 'package:flame/components.dart';
 
@@ -13,11 +12,11 @@ class Weapon {
 
 Future<Weapon> starterWeapon() async {
 
-  Sprite starterWeaponSprite = await Sprite.load("crosshair.png");
+  Sprite starterWeaponSprite = await Sprite.load("WeaponBow.png");
   return Weapon(
     starterWeaponSprite,
     BulletTypes.ARROW,
-    100
+    200
   );
 
 }

@@ -1,9 +1,9 @@
-import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
+import 'package:cod_zombies_2d/maps/door/door.dart';
+import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:flame/components.dart';
-import 'package:flame/geometry.dart';
 
 import 'arrow.dart';
 
@@ -12,12 +12,12 @@ enum BulletTypes {
   ARROW
 }
 
-Bullet returnBulletFromBulletType(BulletTypes bulletType, Vector2 normalizedMovementVector) {
+Bullet returnBulletFromBulletType(BulletTypes bulletType, Vector2 playerPosition, Vector2 normalizedMovementVector) {
 
   switch(bulletType) {
 
     case BulletTypes.ARROW:
-      return Arrow(normalizedMovementVector);
+      return Arrow(playerPosition, normalizedMovementVector);
   }
 
 }
@@ -29,8 +29,9 @@ abstract class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasH
   abstract final double speed;
   abstract int damage;
 
-  Bullet(Vector2 size, this.normalizedMovementVector) :
+  Bullet(Vector2 srcPosition, Vector2 size, this.normalizedMovementVector) :
         super(
+          position: srcPosition,
           size: size
         );
 
@@ -43,6 +44,7 @@ abstract class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasH
   @override
   Future<void>? onLoad() async {
     await loadSprite();
+    await loadHitbox();
     return super.onLoad();
   }
 
@@ -63,18 +65,5 @@ abstract class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasH
     }
 
   }
-
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    handleCollision(other);
-    super.onCollision(intersectionPoints, other);
-  }
-
-  @override
-  void onCollisionEnd(Collidable other) {
-    handleCollision(other);
-    super.onCollisionEnd(other);
-  }
-
 
 }
