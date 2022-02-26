@@ -1,5 +1,5 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
-import 'package:cod_zombies_2d/entities/bullet.dart';
+import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
@@ -21,10 +21,10 @@ enum PlayerFaceDirection {
 
 class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable, MoveableEntity {
 
-  static final int spriteHeight = 28;
-  static final int spriteWidth = 16;
+  static const int spriteHeight = 28;
+  static const int spriteWidth = 16;
 
-  static final hitPointIncrease = 40;
+  static const hitPointIncrease = 40;
 
 
   /// player game attributes
@@ -75,7 +75,9 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
         );
 
 
-  Future<void> onLoad() async {
+  @override
+  Future<void> setupAnimations() async {
+
 
     List<Sprite> standardRunAnimationFrames = [
       await Sprite.load('KnightRun1.png'),
@@ -112,7 +114,12 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     animation = _standardIdleAnimation;
 
+  }
 
+  @override
+  Future<void> onLoad() async {
+
+    await setupAnimations();
 
     movementStatusToSpriteAnimation = {
       Pair(true, PlayerFaceDirection.RIGHT): _standardRunAnimation,
@@ -218,9 +225,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     );
 
     // TODO: this does not work... must make individual classes for specific instantiation of bullets
-    Bullet bullet = weapons[currentActiveWeaponIndex].weaponBullet;
-    gameRef.add(bullet);
-    bullet.onAdd(bulletMovementVector.normalized());
+    BulletTypes bulletType = weapons[currentActiveWeaponIndex].weaponBullet;
+    gameRef.add(returnBulletFromBulletType(bulletType, bulletMovementVector.normalized()));
 
   }
 

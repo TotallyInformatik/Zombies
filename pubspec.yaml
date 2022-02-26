@@ -81,6 +81,11 @@ flutter:
     - assets/images/KnightIdleInverted3.png
     - assets/images/KnightIdleInverted4.png
 
+    - assets/images/ZombieRun1.png
+    - assets/images/ZombieRun2.png
+    - assets/images/ZombieRun3.png
+    - assets/images/ZombieRun4.png
+
     - assets/images/FloorSpikes.png
 
     - assets/images/HeartFull.png

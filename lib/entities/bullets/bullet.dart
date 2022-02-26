@@ -5,33 +5,50 @@ import 'package:cod_zombies_2d/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 
-class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable {
+import 'arrow.dart';
 
-  late Vector2 normalizedMovementVector;
-  final double _speed = 200;
-  int _damage;
 
-  Bullet(this._damage, Sprite sprite, Vector2 size) :
+enum BulletTypes {
+  ARROW
+}
+
+Bullet returnBulletFromBulletType(BulletTypes bulletType, Vector2 normalizedMovementVector) {
+
+  switch(bulletType) {
+
+    case BulletTypes.ARROW:
+      return Arrow(normalizedMovementVector);
+  }
+
+}
+
+
+abstract class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, Collidable {
+
+  Vector2 normalizedMovementVector;
+  abstract final double speed;
+  abstract int damage;
+
+  Bullet(Vector2 size, this.normalizedMovementVector) :
         super(
-          sprite: sprite,
           size: size
         );
 
+  /// should load the correct sprite for the bullet
+  Future<void> loadSprite();
+
+  /// should load the correct hitbox for the bullet
+  Future<void> loadHitbox();
+
   @override
   Future<void>? onLoad() async {
-    addHitbox(HitboxCircle());
+    await loadSprite();
     return super.onLoad();
-  }
-
-  /// should always be called before adding this component
-  void onAdd(Vector2 pNormalizedMovementVector) {
-    position = gameRef.player.position;
-    normalizedMovementVector = pNormalizedMovementVector;
   }
 
   @override
   void update(double dt) {
-    position += normalizedMovementVector * _speed * dt;
+    position += normalizedMovementVector * speed * dt;
     super.update(dt);
   }
 
@@ -42,7 +59,7 @@ class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasHitboxes, 
     }
 
     if (other is Zombie) {
-      other.processHit(_damage * gameRef.player.playerDamageFactor);
+      other.processHit(damage * gameRef.player.playerDamageFactor);
     }
 
   }

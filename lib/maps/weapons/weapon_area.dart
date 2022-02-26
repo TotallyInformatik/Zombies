@@ -1,4 +1,4 @@
-import 'package:cod_zombies_2d/entities/bullet.dart';
+import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
 import 'package:cod_zombies_2d/entities/collidables.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/game.dart';

@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 
-mixin MoveableEntity on HasHitboxes, Collidable {
+mixin MoveableEntity on HasHitboxes, Collidable, SpriteAnimationComponent {
 
   void handleImmovableCollision(Set<Vector2> intersectionPoints) {
     if (intersectionPoints.length == 2) {
@@ -14,5 +14,6 @@ mixin MoveableEntity on HasHitboxes, Collidable {
   }
 
   void processHit(int dHealth);
+  Future<void> setupAnimations();
 
 }

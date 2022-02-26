@@ -6,17 +6,10 @@ import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 
-class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<ZombiesGame>, MoveableEntity {
-
-  static final standardZombieSprite = Sprite.load("ZombieStandard.png");
+class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasGameRef<ZombiesGame>, MoveableEntity {
 
   final double _movementSpeed = 30;
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
-
-  final int _movementFrameInterval = 1;
-
-  double _accumulatedDt = 0;
-  double _accumulatedFrames = 0;
 
   int hp;
 
@@ -31,8 +24,8 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
 
   @override
   Future<void>? onLoad() async {
-    //sprite = await Sprite.load(spriteName);
-    sprite = await standardZombieSprite;
+    await setupAnimations();
+
     anchor = Anchor.center;
     addHitbox(HitboxRectangle(relation: _hitboxRelation));
     return super.onLoad();
@@ -41,15 +34,7 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
   @override
   void update(double dt) {
 
-    _accumulatedFrames++;
-    _accumulatedDt += dt;
-
-    if (_accumulatedFrames > _movementFrameInterval) {
-      followPlayer(_accumulatedDt);
-      _accumulatedFrames = 0;
-      _accumulatedDt = 0;
-    }
-
+    followPlayer(dt);
 
     super.update(dt);
   }
@@ -89,6 +74,18 @@ class Zombie extends SpriteComponent with HasHitboxes, Collidable, HasGameRef<Zo
     );
 
     position += movementVector.normalized() * _movementSpeed * dt;
+
+  }
+
+  @override
+  Future<void> setupAnimations() async {
+
+    animation = SpriteAnimation.spriteList([
+      await Sprite.load("ZombieRun1.png"),
+      await Sprite.load("ZombieRun2.png"),
+      await Sprite.load("ZombieRun3.png"),
+      await Sprite.load("ZombieRun4.png")
+    ], stepTime: 0.2);
 
   }
 
