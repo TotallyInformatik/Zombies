@@ -19,8 +19,9 @@ class QuickRevive extends PerkArea {
     Player player = gameRef.player;
 
     if (player.points < cost) return;
-    if (player.possessedPerks.contains(perkType)) return;
 
+
+    gameRef.remove(this);
     super.onInteract();
   }
 }

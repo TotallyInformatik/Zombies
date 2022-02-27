@@ -72,6 +72,11 @@ flutter:
     - assets/images/KnightRunInverted3.png
     - assets/images/KnightRunInverted4.png
 
+    - assets/images/QuickReviveFlask.png
+    - assets/images/JuggernogFlask.png
+    - assets/images/DoubleTapFlask.png
+    - assets/images/MuleKickFlask.png
+
     - assets/images/KnightIdle1.png
     - assets/images/KnightIdle2.png
     - assets/images/KnightIdle3.png
@@ -88,6 +93,15 @@ flutter:
 
     - assets/images/WeaponArrow.png
     - assets/images/WeaponBow.png
+    - assets/images/WeaponSpear.png
+    - assets/images/WeaponGreenMagicStaff.png
+    - assets/images/WeaponApprenticesBullet.png
+    - assets/images/WeaponRedMagicStaff.png
+    - assets/images/WeaponExcalibur.png
+    - assets/images/Explosion1.png
+    - assets/images/Explosion2.png
+    - assets/images/Explosion3.png
+    - assets/images/Explosion4.png
 
     - assets/images/FloorSpikes.png
 
@@ -96,7 +110,7 @@ flutter:
     - assets/images/Coin.png
 
     - assets/images/ZombieStandard.png
-    - assets/images/crosshair.png
+    - assets/images/WeaponApprenticesBullet.png
 
     - assets/tiles/DungeonTilesetII.tsx
     - assets/tiles/map.tmx

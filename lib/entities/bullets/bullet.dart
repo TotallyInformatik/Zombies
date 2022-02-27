@@ -1,23 +1,38 @@
+import 'package:cod_zombies_2d/entities/bullets/apprentices_orb.dart';
+import 'package:cod_zombies_2d/entities/bullets/explosion.dart';
+import 'package:cod_zombies_2d/entities/bullets/spear.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
+import 'package:cod_zombies_2d/maps/interactive_area.dart';
 import 'package:flame/components.dart';
 
 import 'arrow.dart';
 
 
 enum BulletTypes {
-  ARROW
+  ARROW,
+  SPEAR,
+  APPRENTICES_ORB,
+  EXPLOSION,
+  EXCALIBUR
 }
 
-Bullet returnBulletFromBulletType(BulletTypes bulletType, Vector2 playerPosition, Vector2 normalizedMovementVector) {
+Bullet? returnBulletFromBulletType(BulletTypes bulletType, Vector2 playerPosition, Vector2 normalizedMovementVector, Vector2 shootPosition) {
 
   switch(bulletType) {
 
     case BulletTypes.ARROW:
       return Arrow(playerPosition, normalizedMovementVector);
+    case BulletTypes.SPEAR:
+      return Spear(playerPosition, normalizedMovementVector);
+    case BulletTypes.APPRENTICES_ORB:
+      return ApprenticesOrb(playerPosition, normalizedMovementVector);
+    case BulletTypes.EXPLOSION:
+    case BulletTypes.EXCALIBUR:
+      return null;
   }
 
 }
@@ -56,7 +71,9 @@ abstract class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasH
 
   handleCollision(Collidable other) {
 
-    if (other is! Player && other is! Bullet) {
+    if (other is! Player &&
+        other is! Bullet &&
+        other is! InteractiveArea) {
       gameRef.remove(this);
     }
 

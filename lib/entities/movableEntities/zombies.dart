@@ -8,7 +8,7 @@ import 'package:flame/geometry.dart';
 
 class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasGameRef<ZombiesGame>, MoveableEntity {
 
-  final double _movementSpeed = 30;
+  final double _movementSpeed = 50;
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
 
   int hp;
@@ -51,8 +51,10 @@ class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasG
 
   @override
   void processHit(int dHealth) {
-    hp -= dHealth;
-    gameRef.player.changePoints(Player.hitPointIncrease);
+    Player player = gameRef.player;
+    hp -= dHealth * player.playerDamageFactor;
+    player.changePoints(Player.hitPointIncrease);
+    position += (player.position - position).normalized() * -5;
     if (hp <= 0) {
       removeOneself();
     }

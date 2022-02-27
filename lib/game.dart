@@ -27,8 +27,10 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
   final List<Zombie> allZombies = [];
   static int hardMaxZombieCountCap = 20;
 
-  int dynamicMaxZombieCountCap = 5;
+  int dynamicMaxZombieCountCap = 2;
   int currentZombieCount = 0;
+
+  Vector2 viewportDimensions = Vector2(465, 270);
 
   late final GameMap map;
 
@@ -43,9 +45,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
     player = map.player;
 
-    camera.viewport = FixedResolutionViewport(
-        Vector2(465, 270)
-    );
+    camera.viewport = FixedResolutionViewport(viewportDimensions);
 
     camera.followComponent(
         player
@@ -79,25 +79,31 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
       RawKeyEvent event,
       Set<LogicalKeyboardKey> keysPressed,
       ) {
-
     if (gameStatus != GameStatus.PLAYING) return KeyEventResult.ignored;
 
     switch (event.runtimeType) {
-      case RawKeyDownEvent: {
+      case RawKeyDownEvent:
+        {
+          if (keysPressed.contains(LogicalKeyboardKey.keyW) ||
+              keysPressed.contains(LogicalKeyboardKey.keyS) ||
+              keysPressed.contains(LogicalKeyboardKey.keyA) ||
+              keysPressed.contains(LogicalKeyboardKey.keyD)) {
+            player.move(keysPressed);
+          }
 
-        if (keysPressed.contains(LogicalKeyboardKey.keyW) ||
-            keysPressed.contains(LogicalKeyboardKey.keyS) ||
-            keysPressed.contains(LogicalKeyboardKey.keyA) ||
-            keysPressed.contains(LogicalKeyboardKey.keyD)) {
-          player.move(keysPressed);
+          if (keysPressed.contains(LogicalKeyboardKey.digit1) ||
+              keysPressed.contains(LogicalKeyboardKey.digit2) ||
+              keysPressed.contains(LogicalKeyboardKey.digit3)) {
+            player.switchWeapons(keysPressed);
+          }
+
+          break;
         }
-
-        break;
-      }
-      case RawKeyUpEvent: {
-        player.stop(event.logicalKey);
-        break;
-      }
+      case RawKeyUpEvent:
+        {
+          player.stop(event.logicalKey);
+          break;
+        }
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
@@ -105,7 +111,6 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
     }
 
     return KeyEventResult.handled;
-
   }
 
   @override

@@ -19,7 +19,6 @@ class MuleKick extends PerkArea {
     Player player = gameRef.player;
 
     if (player.points < cost) return;
-    if (player.possessedPerks.contains(perkType)) return;
 
     player.maxWeaponCount = 3;
     super.onInteract();

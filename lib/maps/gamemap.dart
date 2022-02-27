@@ -1,4 +1,5 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
+import 'package:cod_zombies_2d/entities/bullets/explosion.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/game.dart';
@@ -11,6 +12,8 @@ import 'package:cod_zombies_2d/maps/perks/mule_kick.dart';
 import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
 import 'package:cod_zombies_2d/maps/perks/quick_revive.dart';
 import 'package:cod_zombies_2d/maps/room.dart';
+import 'package:cod_zombies_2d/maps/weapons/weapon.dart';
+import 'package:cod_zombies_2d/maps/weapons/weapon_area.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/cupertino.dart';
@@ -277,9 +280,79 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
 
   }
 
-  void _setupWeapons() {
+  Future<void> _setupWeapons() async {
 
     final weaponAreaLayer = map.tileMap.getObjectGroupFromLayer("WeaponAreas");
+
+    Weapon bowWeapon = await bow();
+    Weapon spearWeapon = await spear();
+    Weapon apprenticesStaffWeapon = await apprenticesStaff();
+
+    Weapon meguminWeapon = await megumin();
+
+
+    for (final weaponAreaObject in weaponAreaLayer.objects) {
+
+      Vector2 position = Vector2(
+          weaponAreaObject.x,
+          weaponAreaObject.y
+      );
+      Vector2 size = Vector2(
+          weaponAreaObject.width,
+          weaponAreaObject.height
+      );
+
+      switch(weaponAreaObject.type) {
+
+        case "bow":
+          add(WeaponArea(
+            position,
+            size,
+            bowWeapon,
+            750,
+            "Press F to buy Bow (750)"
+          ));
+          break;
+        case "spear":
+          add(WeaponArea(
+            position,
+            size,
+            spearWeapon,
+            1250,
+            "Press F to buy Spear (1250)"
+          ));
+          break;
+        case "apprentices_staff":
+          add(WeaponArea(
+            position,
+            size,
+            apprenticesStaffWeapon,
+            1250,
+            "Press F to buy Apprentice's staff (1250)"
+          ));
+          break;
+        case "megumin":
+          add(WeaponArea(
+            position,
+            size,
+            meguminWeapon,
+            2000,
+            "Press F to buy Megumin (2000)"
+          ));
+          break;
+        case "excalibur":
+          add(WeaponArea(
+              position,
+              size,
+              meguminWeapon,
+              10000,
+              "Press F to buy Excalibur (10000)"
+          ));
+          break;
+
+      }
+
+    }
 
   }
 

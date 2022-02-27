@@ -1,5 +1,6 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
 import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
+import 'package:cod_zombies_2d/entities/bullets/explosion.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
@@ -32,7 +33,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   /// player game attributes
   final double _speed = 80;
   int playerDamageFactor = 1;
-  int points = 500;
+  int points = 10000;
 
   /// health
   int maximumHealthPoints = 3;
@@ -133,7 +134,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     anchor = Anchor.center;
 
-    weapons.add(await starterWeapon());
+    weapons.add(await bow());
+    gameRef.ui.updateWeapon();
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
@@ -165,16 +167,22 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   void revive() {
     possessedPerks.clear();
     deactivateJuggernog();
+    maxWeaponCount = 2;
+    currentActiveWeaponIndex = 0;
+    gameRef.ui.updateWeapon();
+    if (weapons.length == 3) {
+      weapons.remove(weapons[2]);
+    }
   }
 
   void die() {
 
     if (possessedPerks.contains(Perks.QUICK_REVIVE)) {
+      gameRef.ui.deactivatePerks();
       revive();
       return;
     }
 
-    // TODO: set player animation to hit sprite
     gameRef.endGame();
 
   }
@@ -220,6 +228,25 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       currentArea!.onInteract();
       exitArea();
     }
+
+  }
+
+  void switchWeapons(Set<LogicalKeyboardKey> pressedKeys) {
+
+    if (pressedKeys.contains(LogicalKeyboardKey.digit1)) {
+      currentActiveWeaponIndex = 0;
+    } else if (pressedKeys.contains(LogicalKeyboardKey.digit2)) {
+      currentActiveWeaponIndex = 1;
+    } else if (pressedKeys.contains(LogicalKeyboardKey.digit3)) {
+      currentActiveWeaponIndex = 2;
+    }
+
+    if (weapons.length < currentActiveWeaponIndex + 1) {
+      currentActiveWeaponIndex = weapons.length - 1;
+    }
+
+    gameRef.ui.updateWeapon();
+
   }
 
   /// this function is called after the player successfully shoots, so as
@@ -236,14 +263,35 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     if (!_canShoot) return;
 
-
-    Vector2 bulletMovementVector = Vector2(
-        tapPosition.x - x,
-        tapPosition.y - y
-    );
-
     BulletTypes bulletType = weapons[currentActiveWeaponIndex].weaponBullet;
-    gameRef.add(returnBulletFromBulletType(bulletType, position, bulletMovementVector.normalized()));
+
+    switch (bulletType) {
+
+      case BulletTypes.ARROW:
+      case BulletTypes.SPEAR:
+      case BulletTypes.APPRENTICES_ORB:
+
+        Vector2 bulletMovementVector = Vector2(
+            tapPosition.x - x,
+            tapPosition.y - y
+        );
+        gameRef.add(returnBulletFromBulletType(bulletType, position, bulletMovementVector.normalized(), tapPosition)!);
+
+        break;
+      case BulletTypes.EXPLOSION:
+
+        Vector2 deltaVector = tapPosition - position;
+
+        if (deltaVector.length > Explosion.maxExplosionDistance) {
+          tapPosition = position + deltaVector.normalized() * Explosion.maxExplosionDistance;
+        }
+
+        gameRef.add(Explosion(tapPosition));
+
+        break;
+      case BulletTypes.EXCALIBUR:
+        break;
+    }
 
     _canShoot = false;
     delayNextShot();

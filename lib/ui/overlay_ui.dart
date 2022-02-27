@@ -1,4 +1,6 @@
+import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/game.dart';
+import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
 import 'package:cod_zombies_2d/ui/overlay_sprite.dart';
 import 'package:cod_zombies_2d/ui/overlay_text.dart';
 import 'package:flame/components.dart';
@@ -15,10 +17,20 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
   late final OverlayText _pointsText;
   late final OverlayText _tooltip;
 
+  late final OverlaySprite _quickReviveFlask;
+  late final OverlaySprite _juggernogFlask;
+  late final OverlaySprite _doubleTapFlask;
+  late final OverlaySprite _muleKickFlask;
+  final double flaskSize = 20;
+
+  late final OverlaySprite _weaponSprite;
+  final double weaponSize = 40;
+
   final List<OverlaySprite> heartSprites = [];
   final double heartSize = 20;
 
   final double coinSize = 15;
+
 
 
 
@@ -32,6 +44,9 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
   }
 
   void _setupOverlayUI() async {
+
+    double viewportSizeX = gameRef.viewportDimensions.x;
+    double viewportSizeY = gameRef.viewportDimensions.y;
 
     /// player hp
     _fullHeartSprite = await Sprite.load("HeartFull.png");
@@ -68,14 +83,27 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
     );
     gameRef.add(_tooltip);
 
+    /// perks
+    _quickReviveFlask = OverlaySprite(await Sprite.load("QuickReviveFlask.png"), Vector2(viewportSizeX - flaskSize * 4, 0), flaskSize);
+    _juggernogFlask = OverlaySprite(await Sprite.load("JuggernogFlask.png"), Vector2(viewportSizeX - flaskSize * 3, 0), flaskSize);
+    _doubleTapFlask = OverlaySprite(await Sprite.load("DoubleTapFlask.png"), Vector2(viewportSizeX - flaskSize * 2, 0), flaskSize);
+    _muleKickFlask = OverlaySprite(await Sprite.load("MuleKickFlask.png"), Vector2(viewportSizeX - flaskSize * 1, 0), flaskSize);
+
+    /// weapons
+    _weaponSprite = OverlaySprite(await Sprite.load("WeaponBow.png"), Vector2(viewportSizeX - weaponSize, viewportSizeY - weaponSize), weaponSize);
+    _weaponSprite.size = _weaponSprite.sprite!.originalSize;
+    gameRef.add(_weaponSprite);
+
   }
 
   void showTooltip(String tooltip) {
     _tooltip.text = tooltip;
   }
 
-  void _setupGameOverOverlay() {
-
+  void updateWeapon() {
+    Player player = gameRef.player;
+    _weaponSprite.sprite = player.weapons[player.currentActiveWeaponIndex].weaponSprite;
+    _weaponSprite.size = _weaponSprite.sprite!.originalSize;
   }
 
   void updateMaximumHearts() {
@@ -105,6 +133,34 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
     gameRef.remove(_pointsText);
     _pointsText.text = "Points: ${gameRef.player.points}";
     gameRef.add(_pointsText);
+  }
+
+  void activatePerk(Perks perkType) {
+
+    switch (perkType) {
+
+      case Perks.QUICK_REVIVE:
+        gameRef.add(_quickReviveFlask);
+        break;
+      case Perks.MULE_KICK:
+        gameRef.add(_muleKickFlask);
+        break;
+      case Perks.JUGGERNOG:
+        gameRef.add(_juggernogFlask);
+        break;
+      case Perks.DOUBLE_TAP:
+        gameRef.add(_doubleTapFlask);
+        break;
+
+    }
+
+  }
+
+  void deactivatePerks() {
+    gameRef.remove(_quickReviveFlask);
+    gameRef.remove(_juggernogFlask);
+    gameRef.remove(_doubleTapFlask);
+    gameRef.remove(_muleKickFlask);
   }
 
 }

@@ -39,7 +39,6 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
       name: 'spawn-timer-${name}',
       timeout: const Duration(seconds: 1),
       task: () async {
-        print("spawning at ${name}");
         _spawnZombie();
       },
       minCycle: const Duration(seconds: 1),
@@ -101,6 +100,8 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
 
     if (gameRef.gameStatus != GameStatus.PLAYING) return;
     if (gameRef.currentZombieCount > gameRef.dynamicMaxZombieCountCap) return;
+
+    print("spawning at ${name}");
 
     Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, 5);
     gameRef.add(newZombie);

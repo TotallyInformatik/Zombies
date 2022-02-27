@@ -17,20 +17,36 @@ class WeaponArea extends CollidableObject with Collidable, HasGameRef<ZombiesGam
 
   WeaponArea(Vector2 position, Vector2 size, this.weapon, this.cost, this.tooltip) : super(position, size);
 
+  void setToolTipWhenOwned() {
+
+    String standardTooltip = tooltip;
+    tooltip = "you already own this weapon";
+
+    Future.delayed(const Duration(seconds: 1)).then((value) => {
+      tooltip = standardTooltip
+    });
+
+  }
+
   @override
   void onInteract() {
 
     Player player = gameRef.player;
 
     if (player.points < cost) return;
-    if (player.weapons.contains(weapon)) return;
+    if (player.weapons.contains(weapon)) {
+      setToolTipWhenOwned();
+      return;
+    }
 
-
-    if (player.weapons.length == player.maxWeaponCount) {
+    player.changePoints(-cost);
+    if (player.weapons.length >= player.maxWeaponCount) {
       player.weapons[player.currentActiveWeaponIndex] = weapon;
     } else if (player.weapons.length < player.maxWeaponCount) {
       player.weapons.add(weapon);
     }
+    gameRef.ui.updateWeapon();
+    setToolTipWhenOwned();
 
   }
 

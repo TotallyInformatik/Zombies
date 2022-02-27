@@ -19,7 +19,6 @@ class Juggernog extends PerkArea {
     Player player = gameRef.player;
 
     if (player.points < cost) return;
-    if (player.possessedPerks.contains(perkType)) return;
 
     super.onInteract();
     player.activateJuggernog();

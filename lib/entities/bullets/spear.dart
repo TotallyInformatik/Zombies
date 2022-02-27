@@ -4,18 +4,18 @@ import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 
-class Arrow extends Bullet with Collidable {
+class Spear extends Bullet with Collidable {
 
   @override
-  double speed = 100;
+  double speed = 200;
 
   @override
-  int damage = 1;
+  int damage = 2;
 
-  Arrow(Vector2 srcPosition, Vector2 normalizedMovementVector) : super(
-    srcPosition + normalizedMovementVector * 10,
+  Spear(Vector2 srcPosition, Vector2 normalizedMovementVector) : super(
+    srcPosition + normalizedMovementVector * 25,
     Vector2(
-      4, 12
+        6, 30
     ),
     normalizedMovementVector
   );
@@ -35,7 +35,7 @@ class Arrow extends Bullet with Collidable {
 
   @override
   Future<void> loadSprite() async {
-    sprite = await Sprite.load("WeaponArrow.png");
+    sprite = await Sprite.load("WeaponSpear.png");
   }
 
   @override

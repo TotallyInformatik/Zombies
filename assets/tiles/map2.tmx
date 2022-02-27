@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.0" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="39" nextobjectid="187">
+<map version="1.8" tiledversion="1.8.0" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="41" nextobjectid="199">
  <tileset firstgid="1" name="DungeonTilesetII" tilewidth="16" tileheight="16" tilecount="1024" columns="32">
   <image source="../images/DungeonTilesetII.png" width="512" height="512"/>
  </tileset>
@@ -111,11 +111,50 @@
  </objectgroup>
  <objectgroup id="38" name="WeaponAreas">
   <object id="182" name="Apprentice's Staff" type="apprentices_staff" x="249.667" y="377.667" width="28.6667" height="60.3333"/>
-  <object id="183" name="Javelin" type="javelin" x="490.667" y="232.667" width="28" height="61"/>
+  <object id="183" name="Spear" type="spear" x="490.667" y="232.667" width="28" height="61"/>
   <object id="184" name="Bow" type="bow" x="376" y="232" width="32.3333" height="51.3333"/>
   <object id="185" name="Megumin" type="megumin" x="488.667" y="697" width="30.6667" height="60.3333"/>
   <object id="186" name="Excalibur" type="excalibur" x="808.667" y="566.333" width="31.3333" height="65.6667"/>
  </objectgroup>
+ <objectgroup id="39" name="Skulls">
+  <object id="187" name="Skull" x="408" y="216">
+   <point/>
+  </object>
+  <object id="188" name="Skull" x="599.333" y="250.667">
+   <point/>
+  </object>
+  <object id="189" name="Skull" x="504.667" y="377.333">
+   <point/>
+  </object>
+  <object id="190" name="Skull" x="359.667" y="410">
+   <point/>
+  </object>
+  <object id="191" name="Skull" x="280.667" y="490.333">
+   <point/>
+  </object>
+  <object id="192" name="Skull" x="392" y="601">
+   <point/>
+  </object>
+  <object id="193" name="Skull" x="504.333" y="665.333">
+   <point/>
+  </object>
+  <object id="194" name="Skull" x="520.333" y="554.667">
+   <point/>
+  </object>
+  <object id="195" name="Skull" x="584" y="729">
+   <point/>
+  </object>
+  <object id="196" name="Skull" x="807" y="554.333">
+   <point/>
+  </object>
+  <object id="197" name="Skull" x="841" y="697">
+   <point/>
+  </object>
+  <object id="198" name="Skull" x="72.6667" y="457">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="40" name="LuckyChests"/>
  <objectgroup id="4" name="Walls">
   <object id="2" x="283.75" y="140.25" width="136.75" height="4.25"/>
   <object id="4" x="284" y="144.333" width="4" height="143.667"/>
