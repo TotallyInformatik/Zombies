@@ -17,7 +17,8 @@ enum BulletTypes {
   SPEAR,
   APPRENTICES_ORB,
   EXPLOSION,
-  EXCALIBUR
+  EXCALIBUR,
+  SKULL
 }
 
 Bullet? returnBulletFromBulletType(BulletTypes bulletType, Vector2 playerPosition, Vector2 normalizedMovementVector, Vector2 shootPosition) {
@@ -32,6 +33,7 @@ Bullet? returnBulletFromBulletType(BulletTypes bulletType, Vector2 playerPositio
       return ApprenticesOrb(playerPosition, normalizedMovementVector);
     case BulletTypes.EXPLOSION:
     case BulletTypes.EXCALIBUR:
+    case BulletTypes.SKULL:
       return null;
   }
 

@@ -51,6 +51,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   List<Weapon> weapons = [];
   bool _canShoot = true;
 
+  /// easter egg
+  int skullCount = 0;
 
   /// movement status
   Vector2 _moveDirection = Vector2.zero();

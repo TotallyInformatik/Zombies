@@ -6,7 +6,8 @@ enum WeaponType {
   SPEAR,
   APPRENTICES_STAFF,
   MEGUMIN,
-  EXCALIBUR
+  EXCALIBUR,
+  SKULL
 }
 
 class Weapon {
@@ -74,5 +75,15 @@ Future<Weapon> excalibur() async {
       BulletTypes.EXCALIBUR,
       0,
       WeaponType.EXCALIBUR
+  );
+}
+
+Future<Weapon> skull() async {
+  Sprite skullSprite = await Sprite.load("Skull.png");
+  return Weapon(
+    skullSprite,
+    BulletTypes.SKULL,
+    0,
+    WeaponType.SKULL
   );
 }

@@ -5,6 +5,7 @@ import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
+import 'package:cod_zombies_2d/maps/easteregg/skull_area.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
 import 'package:cod_zombies_2d/maps/perks/double_tap.dart';
 import 'package:cod_zombies_2d/maps/perks/juggernog.dart';
@@ -356,6 +357,28 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
 
   }
 
+  void _setupSkulls() {
+
+    final eastereggObject = map.tileMap.getObjectGroupFromLayer("EasterEgg");
+
+    for (final eastereggObject in eastereggObject.objects) {
+
+      switch (eastereggObject.type) {
+        case "skull":
+          add(SkullArea(
+              Vector2(
+                  eastereggObject.x,
+                  eastereggObject.y
+              )
+          ));
+        case "skull_crafting_table_area":
+          add();
+      }
+
+    }
+
+  }
+
   void _setupMap() {
 
     _setupWalls();
@@ -365,6 +388,8 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
 
     _setupPerks();
     _setupWeapons();
+
+    _setupSkulls();
 
     _setupDoors();
 
