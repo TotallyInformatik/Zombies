@@ -26,8 +26,10 @@ class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasG
   Future<void>? onLoad() async {
     await setupAnimations();
 
+    debugMode = true;
+
     anchor = Anchor.center;
-    addHitbox(HitboxRectangle(relation: _hitboxRelation));
+    addHitbox(HitboxCircle(normalizedRadius: 0.7));
     return super.onLoad();
   }
 

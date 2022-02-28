@@ -22,8 +22,9 @@ class ZombieBig extends Zombie {
   Future<void>? onLoad() async {
     await setupAnimations();
 
+    size = Vector2.all(30);
+
     anchor = Anchor.center;
-    addHitbox(HitboxRectangle(relation: _hitboxRelation));
     return super.onLoad();
   }
 

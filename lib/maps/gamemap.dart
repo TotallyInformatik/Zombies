@@ -290,6 +290,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
     Weapon apprenticesStaffWeapon = await apprenticesStaff();
 
     Weapon meguminWeapon = await megumin();
+    Weapon excaliburWeapon = await excalibur();
 
 
     for (final weaponAreaObject in weaponAreaLayer.objects) {
@@ -345,7 +346,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
           add(WeaponArea(
               position,
               size,
-              meguminWeapon,
+              excaliburWeapon,
               10000,
               "Press F to buy Excalibur (10000)"
           ));
@@ -371,8 +372,6 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
                   eastereggObject.y
               )
           ));
-        case "skull_crafting_table_area":
-          add();
       }
 
     }

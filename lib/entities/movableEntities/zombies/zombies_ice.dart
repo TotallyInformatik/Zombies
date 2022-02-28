@@ -23,7 +23,6 @@ class ZombieIce extends Zombie {
     await setupAnimations();
 
     anchor = Anchor.center;
-    addHitbox(HitboxRectangle(relation: _hitboxRelation));
     return super.onLoad();
   }
 

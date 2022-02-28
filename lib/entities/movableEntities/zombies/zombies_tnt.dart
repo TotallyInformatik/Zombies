@@ -10,7 +10,7 @@ import '../zombies.dart';
 
 class ZombieTNT extends Zombie {
 
-  final double _movementSpeed = 50;
+  final double _movementSpeed = 40;
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
 
 
