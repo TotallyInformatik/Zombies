@@ -2,6 +2,8 @@ import 'package:cod_zombies_2d/datastructures/pair.dart';
 import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
 import 'package:cod_zombies_2d/entities/bullets/explosion.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/zombies/zombies_ice.dart';
+import 'package:cod_zombies_2d/entities/movableEntities/zombies/zombies_tnt.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
@@ -31,9 +33,9 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
 
   /// player game attributes
-  final double _speed = 80;
+  double _speed = 80;
   int playerDamageFactor = 1;
-  int points = 10000;
+  int points = 30000;
 
   /// health
   int maximumHealthPoints = 3;
@@ -159,7 +161,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     _currentlyInvincible = true;
     invincibilityFrames();
 
-    if (currentHealthPoints == 0) {
+    if (currentHealthPoints <= 0) {
       die();
     }
 
@@ -206,10 +208,26 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       handleImmovableCollision(intersectionPoints);
     } else if (other is InteractiveArea) {
       enterArea(other);
-    } else if (other is Zombie) {
+    } else if (other is Zombie && other is! ZombieIce && other is! ZombieTNT) {
       if (!_currentlyInvincible) {
         processHit(1);
       }
+    }
+    else if (other is ZombieTNT) {
+      if (!_currentlyInvincible) {
+        if(currentHealthPoints <= 4) {
+          die();
+        }
+        else {
+          processHit(4);
+        }
+      }
+    }
+    else if(other is ZombieIce){
+      _speed = 40;
+      Future.delayed(const Duration(seconds: 2), () {
+        _speed = 80;
+      });
     }
 
     super.onCollision(intersectionPoints, other);

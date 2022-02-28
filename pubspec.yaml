@@ -91,6 +91,26 @@ flutter:
     - assets/images/ZombieRun3.png
     - assets/images/ZombieRun4.png
 
+    - assets/images/IceZombieRun1.png
+    - assets/images/IceZombieRun2.png
+    - assets/images/IceZombieRun3.png
+    - assets/images/IceZombieRun4.png
+
+    - assets/images/SmallZombieRun1.png
+    - assets/images/SmallZombieRun2.png
+    - assets/images/SmallZombieRun3.png
+    - assets/images/SmallZombieRun4.png
+
+    - assets/images/BigZombieRun1.png
+    - assets/images/BigZombieRun2.png
+    - assets/images/BigZombieRun3.png
+    - assets/images/BigZombieRun4.png
+
+    - assets/images/TNTZombieRun1.png
+    - assets/images/TNTZombieRun2.png
+    - assets/images/TNTZombieRun3.png
+    - assets/images/TNTZombieRun4.png
+
     - assets/images/WeaponArrow.png
     - assets/images/WeaponBow.png
     - assets/images/WeaponSpear.png
