@@ -17,7 +17,7 @@ class DoorArea extends CollidableObject with Collidable, HasGameRef<ZombiesGame>
   late final Pair<Room, Room> boundingRooms;
 
   @override
-  int cost = 500;
+  int cost = 1000;
   final List<SpriteComponent> doorSprites;
 
   DoorArea(Vector2 position, Vector2 size, this.physicalDoor, this.boundingRooms, this.doorSprites) : super(position, size);

@@ -54,6 +54,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   bool _canShoot = true;
 
   /// easter egg
+
   int skullCount = 0;
 
   /// movement status

@@ -3,6 +3,7 @@ import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/maps/gamemap.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
+import 'package:cod_zombies_2d/rounds_manager.dart';
 import 'package:cod_zombies_2d/ui/overlay_ui.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
@@ -21,14 +22,11 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   GameStatus gameStatus = GameStatus.LOADING;
 
+  final RoundsManager roundsManager = RoundsManager();
   late final Player player;
   late final OverlayUI ui;
 
   final List<Zombie> allZombies = [];
-  static int hardMaxZombieCountCap = 20;
-
-  int dynamicMaxZombieCountCap = 2;
-  int currentZombieCount = 0;
 
   Vector2 viewportDimensions = Vector2(465, 270);
 
@@ -40,7 +38,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
     await Flame.device.fullScreen();
     await Flame.device.setLandscape();
 
-    map = new GameMap("map2.tmx");
+    map = GameMap("map2.tmx");
     await add(map);
 
     player = map.player;
@@ -53,6 +51,8 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
     ui = OverlayUI();
     add(ui);
+
+    add(roundsManager);
 
     return super.onLoad();
   }

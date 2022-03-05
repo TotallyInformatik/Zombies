@@ -14,7 +14,7 @@ class ZombieTNT extends Zombie {
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
 
 
-  ZombieTNT(srcX, srcY, int hp) : super(srcX, srcY, hp);
+  ZombieTNT(srcX, srcY) : super(srcX, srcY, 1);
 
 
 
@@ -47,13 +47,7 @@ class ZombieTNT extends Zombie {
 
   @override
   void processHit(int dHealth) {
-      removeOneself();
-  }
-
-  void removeOneself() {
-    gameRef.remove(this);
-    gameRef.allZombies.remove(this);
-    gameRef.currentZombieCount--;
+    removeOneself();
   }
 
   void followPlayer(double dt) {

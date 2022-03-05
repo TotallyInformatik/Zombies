@@ -13,7 +13,8 @@ class OverlayText extends TextComponent with OverlayComponent {
   OverlayText(String text, Vector2 position) : super(
     text: text,
     position: position,
-    textRenderer: _textRenderer
+    textRenderer: _textRenderer,
+    priority: 3
   );
 
 }

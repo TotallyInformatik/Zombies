@@ -12,10 +12,14 @@ class SkullArea extends SpriteComponent with HasHitboxes, Collidable, HasGameRef
   @override
   String tooltip = "";
 
+  static int skullCount = 0;
+
   SkullArea(Vector2 position) : super(
       position: position,
       size: Vector2.all(20)
-  );
+  ) {
+    skullCount++;
+  }
 
   @override
   Future<void>? onLoad() async {
@@ -33,6 +37,11 @@ class SkullArea extends SpriteComponent with HasHitboxes, Collidable, HasGameRef
 
     gameRef.player.skullCount++;
     removeFromParent();
+
+    if (gameRef.player.skullCount == skullCount) {
+      gameRef.ui.updateEasterEggDisplay("These Skulls... They seem to face south-east...").then((value)
+        => gameRef.ui.updateEasterEggDisplay("Almost like they're guiding you..."));
+    }
 
   }
 

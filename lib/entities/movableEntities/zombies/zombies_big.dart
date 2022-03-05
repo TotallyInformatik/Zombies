@@ -57,12 +57,6 @@ class ZombieBig extends Zombie {
     }
   }
 
-  void removeOneself() {
-    gameRef.remove(this);
-    gameRef.allZombies.remove(this);
-    gameRef.currentZombieCount--;
-  }
-
   void followPlayer(double dt) {
 
     Player player = gameRef.player;

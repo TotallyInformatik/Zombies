@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
+import 'package:cod_zombies_2d/rounds_manager.dart';
 import 'package:flame/components.dart';
 import 'package:neat_periodic_task/neat_periodic_task.dart';
 
@@ -105,44 +106,25 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
   void _spawnZombie() {
 
     if (gameRef.gameStatus != GameStatus.PLAYING) return;
-    if (gameRef.currentZombieCount > gameRef.dynamicMaxZombieCountCap) return;
-
-    print("spawning at ${name}");
+    if (gameRef.roundsManager.currentZombieCount > gameRef.roundsManager.dynamicMaxZombieCountCap) return;
 
 
-    Random random = new Random();
-    int randomNumber = random.nextInt(101);
-    if(randomNumber < 50) {
-      Zombie newZombie = Zombie(position.x + (size.x / 2), position.y, 5);
-      gameRef.add(newZombie);
-      gameRef.allZombies.add(newZombie);
-      gameRef.currentZombieCount++;
+
+
+    Random random = Random();
+    int randomNumber = random.nextInt(10);
+    Zombie newZombie;
+
+    if (randomNumber == 0) {
+      newZombie = ZombieTNT(position.x + (size.x / 2), position.y);
+    } else {
+      newZombie = getZombieFromZombieType(position.x + (size.x / 2), position.y, gameRef.roundsManager.currentZombieType.content, gameRef.roundsManager.zombieHPIncrease);
     }
-    else if(randomNumber >= 50 && randomNumber < 55) {
-      ZombieTNT newTNTZombie = ZombieTNT(position.x + (size.x / 2), position.y, 5);
-      gameRef.add(newTNTZombie);
-      gameRef.allZombies.add(newTNTZombie);
-      gameRef.currentZombieCount++;
-    }
-    else if(randomNumber >= 55 && randomNumber < 70) {
-      ZombieIce newIceZombie = ZombieIce(position.x + (size.x / 2), position.y, 5);
-      gameRef.add(newIceZombie);
-      gameRef.allZombies.add(newIceZombie);
-      gameRef.currentZombieCount++;
-    }
-    else if(randomNumber >= 70 && randomNumber < 85) {
-      ZombieSmall newSmallZombie = ZombieSmall(position.x + (size.x / 2), position.y, 3);
-      gameRef.add(newSmallZombie);
-      gameRef.allZombies.add(newSmallZombie);
-      gameRef.currentZombieCount++;
-    }
-    else if(randomNumber >= 85 && randomNumber < 101) {
-      ZombieBig newBigZombie = ZombieBig(
-          position.x + (size.x / 2), position.y, 10);
-      gameRef.add(newBigZombie);
-      gameRef.allZombies.add(newBigZombie);
-      gameRef.currentZombieCount++;
-    }
+
+    gameRef.add(newZombie);
+    gameRef.allZombies.add(newZombie);
+    gameRef.roundsManager.currentZombieCount++;
+
 
   }
 

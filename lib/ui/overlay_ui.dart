@@ -31,6 +31,10 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
 
   final double coinSize = 15;
 
+  late final OverlayText  _roundsText;
+
+  late final OverlayText _easterEggDisplay;
+
 
 
 
@@ -47,6 +51,26 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
 
     double viewportSizeX = gameRef.viewportDimensions.x;
     double viewportSizeY = gameRef.viewportDimensions.y;
+
+    /// round display
+    _roundsText = OverlayText(
+        "",
+        Vector2(10, viewportSizeY - 2*20)
+    );
+    _roundsText.textRenderer = TextPaint(
+        style: GoogleFonts.nanumBrushScript()
+            .copyWith(fontSize: 20, color: Colors.red));
+    _roundsText.positionType = PositionType.viewport;
+
+    gameRef.add(_roundsText);
+
+    /// easter egg displays
+    _easterEggDisplay = OverlayText(
+        "",
+        Vector2(viewportSizeX / 2 + 10, viewportSizeY / 2 - 10)
+    );
+    _easterEggDisplay.positionType = PositionType.viewport;
+    gameRef.add(_easterEggDisplay);
 
     /// player hp
     _fullHeartSprite = await Sprite.load("HeartFull.png");
@@ -94,6 +118,15 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
     _weaponSprite.size = _weaponSprite.sprite!.originalSize;
     gameRef.add(_weaponSprite);
 
+  }
+
+  Future<void> updateEasterEggDisplay(String text) async {
+    _easterEggDisplay.text = text;
+    await Future.delayed(const Duration(seconds: 3)).then((value) => _easterEggDisplay.text = "");
+  }
+
+  void updateRound(int round) {
+    _roundsText.text = "$round";
   }
 
   void showTooltip(String tooltip) {
