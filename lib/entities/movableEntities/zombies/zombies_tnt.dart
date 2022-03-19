@@ -52,6 +52,7 @@ class ZombieTNT extends Zombie {
 
   @override
   void processHit(int dHealth) {
+    gameRef.add(Explosion(position));
     removeOneself();
   }
 

@@ -35,7 +35,7 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
 
   late final OverlayText _easterEggDisplay;
 
-  final double _ammoTextSize = 40;
+  final double _ammoTextSize = 50;
   late final OverlayText _ammoText;
 
 

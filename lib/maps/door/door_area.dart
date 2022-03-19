@@ -12,7 +12,7 @@ class DoorArea extends CollidableObject with Collidable, HasGameRef<ZombiesGame>
 
 
   @override
-  String tooltip = "press F to open door";
+  String tooltip = "press F to open door (1000)";
   late final Door physicalDoor;
   late final Pair<Room, Room> boundingRooms;
 
