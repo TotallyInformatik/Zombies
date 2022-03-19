@@ -29,7 +29,7 @@ class WeaponArea extends CollidableObject with Collidable, HasGameRef<ZombiesGam
   }
 
   @override
-  void onInteract() {
+  void onInteract() async {
 
     Player player = gameRef.player;
 
@@ -40,13 +40,13 @@ class WeaponArea extends CollidableObject with Collidable, HasGameRef<ZombiesGam
     }
 
     player.changePoints(-cost);
-    if (player.weapons.length >= player.maxWeaponCount) {
-      player.weapons[player.currentActiveWeaponIndex] = weapon;
-    } else if (player.weapons.length < player.maxWeaponCount) {
-      player.weapons.add(weapon);
-    }
+    player.changeWeapon(weapon);
     gameRef.ui.updateWeapon();
     setToolTipWhenOwned();
+
+    if (weapon == await excalibur()) {
+      removeFromParent();
+    }
 
   }
 

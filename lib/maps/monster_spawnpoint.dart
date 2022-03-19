@@ -108,9 +108,6 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
     if (gameRef.gameStatus != GameStatus.PLAYING) return;
     if (gameRef.roundsManager.currentZombieCount > gameRef.roundsManager.dynamicMaxZombieCountCap) return;
 
-
-
-
     Random random = Random();
     int randomNumber = random.nextInt(10);
     Zombie newZombie;

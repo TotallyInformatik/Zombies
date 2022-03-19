@@ -1,5 +1,6 @@
 import 'package:cod_zombies_2d/datastructures/pair.dart';
 import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
+import 'package:cod_zombies_2d/entities/bullets/excalibur.dart';
 import 'package:cod_zombies_2d/entities/bullets/explosion.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies/zombies_ice.dart';
@@ -52,6 +53,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   int currentActiveWeaponIndex = 0;
   List<Weapon> weapons = [];
   bool _canShoot = true;
+  bool _canUseExcalibur = true;
 
   /// easter egg
 
@@ -146,6 +148,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
 
     gameRef.gameStatus = GameStatus.PLAYING;
+    changeWeapon(await excalibur());
     return super.onLoad();
   }
 
@@ -155,9 +158,19 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     });
   }
 
+  void useExcalibur() {
+    _canUseExcalibur = false;
+    Future.delayed(const Duration(seconds: Excalibur.useDelayInSeconds)).then((value) => _canUseExcalibur = true);
+  }
+
   @override
   void processHit(int dHealth) {
-    currentHealthPoints -= dHealth;
+    updateHealth(-dHealth);
+  }
+
+  @override
+  void updateHealth(int dHealth) {
+    currentHealthPoints += dHealth;
     gameRef.ui.updateHearts(currentHealthPoints);
     _currentlyInvincible = true;
     invincibilityFrames();
@@ -177,6 +190,14 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     gameRef.ui.updateWeapon();
     if (weapons.length == 3) {
       weapons.remove(weapons[2]);
+    }
+  }
+  
+  void changeWeapon(Weapon weapon) {
+    if (weapons.length >= maxWeaponCount) {
+      weapons[currentActiveWeaponIndex] = weapon;
+    } else if (weapons.length < maxWeaponCount) {
+      weapons.add(weapon);
     }
   }
 
@@ -211,7 +232,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       enterArea(other);
     } else if (other is Zombie && other is! ZombieIce && other is! ZombieTNT) {
       if (!_currentlyInvincible) {
-        processHit(1);
+        updateHealth(-1);
       }
     }
     else if (other is ZombieTNT) {
@@ -220,7 +241,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
           die();
         }
         else {
-          processHit(4);
+          updateHealth(-4);
         }
       }
     }
@@ -311,6 +332,13 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
         break;
       case BulletTypes.EXCALIBUR:
+
+        if (!_canUseExcalibur) {
+          gameRef.ui.updateEasterEggDisplay("You can't use excalibur yet...");
+          return;
+        }
+        gameRef.add(Excalibur(position));
+
         break;
     }
 
@@ -354,7 +382,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   void move(Set<LogicalKeyboardKey> keysPressed) {
     setCurrentlyMoving(true);
 
-    Vector2 playerMoveDirection = new Vector2(0, 0);
+    Vector2 playerMoveDirection = Vector2(0, 0);
 
     if (keysPressed.contains(LogicalKeyboardKey.keyW)) { playerMoveDirection.y -= 1; }
     if (keysPressed.contains(LogicalKeyboardKey.keyS)) { playerMoveDirection.y += 1; }
