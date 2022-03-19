@@ -159,7 +159,7 @@
    <point/>
   </object>
   <object id="199" type="skull_crafting_table_area" x="744.182" y="471.818" width="32.7273" height="32.3636"/>
-  <object id="203" name="EXIT" type="exit" x="816" y="704" width="16" height="16"/>
+  <object id="203" name="EXIT" type="exit" x="816" y="688" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="40" name="LuckyChests"/>
  <objectgroup id="4" name="Walls">

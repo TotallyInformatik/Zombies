@@ -26,7 +26,7 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
   int requiredKillsInCurrentRound = 10;
   int zombiesKilledInCurrentRound = 0;
 
-  int easterEggTriggerRound = 2;
+  int easterEggTriggerRound = 15;
 
   ListNode<ZombieTypes> currentZombieType = zombiesList.first; // every round, there should be different zombies
 
@@ -46,9 +46,14 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
     }
   }
 
+  bool isEasterEggTriggerRound() {
+    return currentRound > easterEggTriggerRound;
+  }
+
   newRound() {
 
-    if (currentRound >= easterEggTriggerRound) {
+    currentRound++;
+    if (isEasterEggTriggerRound()) {
       gameRef.ui.updateEasterEggDisplay("You feel the urge to leave...").then((value)
         => gameRef.ui.updateEasterEggDisplay("NOW!"));
       easterEggNewRound();
@@ -58,8 +63,9 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
 
   }
 
+
+
   standardNewRound() {
-    currentRound++;
     gameRef.ui.updateRound(currentRound);
     zombiesKilledInCurrentRound = 0;
     currentZombieCount = 0;
@@ -76,6 +82,11 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
   }
 
   easterEggNewRound() {
+
+    if (gameRef.player.skullCount == SkullArea.skullCount) {
+      gameRef.openExit();
+    }
+
     gameRef.ui.updateRound(currentRound);
     zombiesKilledInCurrentRound = 0;
     currentZombieCount = 0;

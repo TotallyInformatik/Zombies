@@ -5,6 +5,7 @@ import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
+import 'package:cod_zombies_2d/maps/easteregg/exit_area.dart';
 import 'package:cod_zombies_2d/maps/easteregg/skull_area.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
 import 'package:cod_zombies_2d/maps/perks/double_tap.dart';
@@ -53,6 +54,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
   final String mapName;
 
   late final Player player;
+  late final ExitArea exit_area;
 
   final String roomPrefix = "room_";
   final String areaPrefix = "area_";
@@ -358,20 +360,29 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
 
   }
 
-  void _setupSkulls() {
+  void _setupEasterEgg() {
 
     final eastereggObject = map.tileMap.getObjectGroupFromLayer("EasterEgg");
 
     for (final eastereggObject in eastereggObject.objects) {
 
+      Vector2 position = Vector2(
+          eastereggObject.x,
+          eastereggObject.y
+      );
+      Vector2 size = Vector2(
+        eastereggObject.width,
+        eastereggObject.height
+      );
+
       switch (eastereggObject.type) {
         case "skull":
-          add(SkullArea(
-              Vector2(
-                  eastereggObject.x,
-                  eastereggObject.y
-              )
-          ));
+          add(SkullArea(position));
+          break;
+        case "exit":
+          exit_area = ExitArea(position, size);
+          add(exit_area);
+          break;
       }
 
     }
@@ -388,7 +399,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
     _setupPerks();
     _setupWeapons();
 
-    _setupSkulls();
+    _setupEasterEgg();
 
     _setupDoors();
 

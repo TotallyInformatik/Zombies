@@ -74,6 +74,10 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   }
 
+  void openExit() {
+    map.exit_area.activate();
+  }
+
   @override
   KeyEventResult onKeyEvent(
       RawKeyEvent event,

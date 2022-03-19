@@ -1,6 +1,7 @@
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/interactive_area.dart';
+import 'package:cod_zombies_2d/ui/overlay_ui.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 
@@ -38,9 +39,14 @@ class SkullArea extends SpriteComponent with HasHitboxes, Collidable, HasGameRef
     gameRef.player.skullCount++;
     removeFromParent();
 
+    OverlayUI ui = gameRef.ui;
     if (gameRef.player.skullCount == skullCount) {
-      gameRef.ui.updateEasterEggDisplay("These Skulls... They seem to face south-east...").then((value)
-        => gameRef.ui.updateEasterEggDisplay("Almost like they're guiding you..."));
+      ui.updateEasterEggDisplay("These Skulls... They seem to face south-east...").then((value) => ui.updateEasterEggDisplay(
+        "Almost like they're guiding you..."
+      ));
+      if (gameRef.roundsManager.isEasterEggTriggerRound()) {
+        gameRef.openExit();
+      }
     }
 
   }

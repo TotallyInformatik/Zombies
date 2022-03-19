@@ -22,7 +22,7 @@ abstract class PerkArea extends CollidableObject with Collidable, HasGameRef<Zom
   void setToolTipWhenOwned() {
 
     String standardTooltip = tooltip;
-    tooltip = "you already own this perk";
+    tooltip = "you own this perk";
 
     Future.delayed(const Duration(seconds: 1)).then((value) => {
       tooltip = standardTooltip
