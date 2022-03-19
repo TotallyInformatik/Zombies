@@ -366,8 +366,16 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
   }
 
-  void stop(LogicalKeyboardKey key) {
-    setCurrentlyMoving(false);
+  void stop(LogicalKeyboardKey key, Set<LogicalKeyboardKey> keysPressed) {
+
+    if (!keysPressed.contains(LogicalKeyboardKey.keyW) &&
+        !keysPressed.contains(LogicalKeyboardKey.keyS) &&
+        !keysPressed.contains(LogicalKeyboardKey.keyA) &
+        !keysPressed.contains(LogicalKeyboardKey.keyD)) {
+      setCurrentlyMoving(false);
+    }
+
+
 
     Vector2 currentPlayerMoveDirection = _moveDirection;
 

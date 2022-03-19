@@ -77,13 +77,3 @@ Future<Weapon> excalibur() async {
       WeaponType.EXCALIBUR
   );
 }
-
-Future<Weapon> skull() async {
-  Sprite skullSprite = await Sprite.load("Skull.png");
-  return Weapon(
-    skullSprite,
-    BulletTypes.SKULL,
-    0,
-    WeaponType.SKULL
-  );
-}

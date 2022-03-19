@@ -105,7 +105,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
         }
       case RawKeyUpEvent:
         {
-          player.stop(event.logicalKey);
+          player.stop(event.logicalKey, keysPressed);
           break;
         }
     }
