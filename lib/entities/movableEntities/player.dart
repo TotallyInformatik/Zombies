@@ -146,9 +146,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
-
     gameRef.gameStatus = GameStatus.PLAYING;
-    changeWeapon(await excalibur());
     return super.onLoad();
   }
 
@@ -304,8 +302,13 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   void shoot(Vector2 tapPosition) async {
 
     if (!_canShoot) return;
+    if (weapons[currentActiveWeaponIndex].ammo <= 0) return;
 
     BulletTypes bulletType = weapons[currentActiveWeaponIndex].weaponBullet;
+
+
+    weapons[currentActiveWeaponIndex].shoot();
+    gameRef.ui.updateAmmo();
 
     switch (bulletType) {
 
@@ -341,7 +344,6 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
         break;
     }
-
     _canShoot = false;
     delayNextShot();
 

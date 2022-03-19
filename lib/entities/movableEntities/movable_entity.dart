@@ -9,7 +9,7 @@ mixin MoveableEntity on HasHitboxes, Collidable, SpriteAnimationComponent {
       final collisionNormal = absoluteCenter - mid;
       final seperationDistance = (size.x / 2) - collisionNormal.length;
 
-      position += collisionNormal.normalized().scaled(seperationDistance);
+      position += collisionNormal.normalized().scaled(seperationDistance * 1.1);
     }
   }
 

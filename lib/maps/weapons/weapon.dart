@@ -16,13 +16,21 @@ class Weapon {
   final BulletTypes weaponBullet;
   final int weaponShootDelayInMiliseconds;
 
+  late int ammo;
+  int maxAmmo;
+
   @override
   bool operator ==(other) {
     return other is Weapon && other._weaponType == _weaponType;
   }
 
-  Weapon(this.weaponSprite, this.weaponBullet, this.weaponShootDelayInMiliseconds, this._weaponType);
+  Weapon(this.weaponSprite, this.weaponBullet, this.weaponShootDelayInMiliseconds, this._weaponType, this.maxAmmo) {
+    ammo = maxAmmo;
+  }
 
+  shoot() {
+    ammo--;
+  }
 
 }
 
@@ -33,7 +41,8 @@ Future<Weapon> bow() async {
     starterWeaponSprite,
     BulletTypes.ARROW,
     200,
-    WeaponType.BOW
+    WeaponType.BOW,
+    50
   );
 
 }
@@ -44,7 +53,8 @@ Future<Weapon> spear() async {
     spearSprite,
     BulletTypes.SPEAR,
     300,
-    WeaponType.SPEAR
+    WeaponType.SPEAR,
+    50
   );
 }
 
@@ -54,7 +64,8 @@ Future<Weapon> apprenticesStaff() async {
     staffSprite,
     BulletTypes.APPRENTICES_ORB,
     50,
-    WeaponType.APPRENTICES_STAFF
+    WeaponType.APPRENTICES_STAFF,
+    200
   );
 }
 
@@ -64,7 +75,8 @@ Future<Weapon> megumin() async {
       staffSprite,
       BulletTypes.EXPLOSION,
       1000,
-      WeaponType.MEGUMIN
+      WeaponType.MEGUMIN,
+      20
   );
 }
 
@@ -74,6 +86,7 @@ Future<Weapon> excalibur() async {
       excaliburSprite,
       BulletTypes.EXCALIBUR,
       0,
-      WeaponType.EXCALIBUR
+      WeaponType.EXCALIBUR,
+      1
   );
 }

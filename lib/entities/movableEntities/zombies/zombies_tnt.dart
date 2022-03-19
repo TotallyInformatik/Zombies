@@ -1,3 +1,4 @@
+import 'package:cod_zombies_2d/entities/bullets/explosion.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/movable_entity.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
@@ -40,6 +41,10 @@ class ZombieTNT extends Zombie {
 
     if (other is Wall || other is Door) {
       handleImmovableCollision(intersectionPoints);
+    }
+
+    if (other is Player) {
+      gameRef.add(Explosion(position));
     }
 
     super.onCollision(intersectionPoints, other);

@@ -28,7 +28,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   final List<Zombie> allZombies = [];
 
-  Vector2 viewportDimensions = Vector2(465, 270);
+  Vector2 viewportDimensions = Vector2(400, 200);
 
   late final GameMap map;
 

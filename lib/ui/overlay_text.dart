@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 class OverlayText extends TextComponent with OverlayComponent {
 
   static final _textRenderer = TextPaint(
-      style: GoogleFonts.getFont("Patrick Hand SC")
+      style: GoogleFonts.nanumBrushScript()
           .copyWith(fontSize: 12, color: Colors.white)
   );
 

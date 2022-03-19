@@ -1,13 +1,13 @@
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
+import 'package:cod_zombies_2d/maps/weapons/weapon.dart';
 import 'package:cod_zombies_2d/ui/overlay_sprite.dart';
 import 'package:cod_zombies_2d/ui/overlay_text.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// TODO: add ui for purchased perks
 
 class OverlayUI extends Component with HasGameRef<ZombiesGame> {
 
@@ -35,6 +35,8 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
 
   late final OverlayText _easterEggDisplay;
 
+  final double _ammoTextSize = 40;
+  late final OverlayText _ammoText;
 
 
 
@@ -118,6 +120,10 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
     _weaponSprite.size = _weaponSprite.sprite!.originalSize;
     gameRef.add(_weaponSprite);
 
+    _ammoText = OverlayText("Ammo: 40", Vector2(viewportSizeX - weaponSize - _ammoTextSize, viewportSizeY - weaponSize));
+    gameRef.add(_ammoText);
+
+
   }
 
   Future<void> updateEasterEggDisplay(String text) async {
@@ -137,6 +143,14 @@ class OverlayUI extends Component with HasGameRef<ZombiesGame> {
     Player player = gameRef.player;
     _weaponSprite.sprite = player.weapons[player.currentActiveWeaponIndex].weaponSprite;
     _weaponSprite.size = _weaponSprite.sprite!.originalSize;
+    updateAmmo();
+  }
+
+  void updateAmmo() {
+    Player player = gameRef.player;
+    Weapon weapon = player.weapons[player.currentActiveWeaponIndex];
+
+    _ammoText.text = "Ammo: ${weapon.ammo}";
   }
 
   void updateMaximumHearts() {

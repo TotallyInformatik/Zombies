@@ -314,7 +314,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
             size,
             bowWeapon,
             750,
-            "Press F to buy Bow (750)"
+            "Press F to buy / refill Bow (750)"
           ));
           break;
         case "spear":
@@ -323,7 +323,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
             size,
             spearWeapon,
             1250,
-            "Press F to buy Spear (1250)"
+            "Press F to buy / refill Spears (1250)"
           ));
           break;
         case "apprentices_staff":
@@ -332,7 +332,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
             size,
             apprenticesStaffWeapon,
             1250,
-            "Press F to buy Apprentice's staff (1250)"
+            "Press F to buy / refill Apprentice's staff (1250)"
           ));
           break;
         case "megumin":
@@ -341,7 +341,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
             size,
             meguminWeapon,
             2000,
-            "Press F to buy Megumin (2000)"
+            "Press F to buy / refill Megumin (2000)"
           ));
           break;
         case "excalibur":

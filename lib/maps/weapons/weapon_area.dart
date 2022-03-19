@@ -20,12 +20,12 @@ class WeaponArea extends CollidableObject with Collidable, HasGameRef<ZombiesGam
   void setToolTipWhenOwned() {
 
     String standardTooltip = tooltip;
-    tooltip = "you already own this weapon";
+
+    tooltip = "Refill ammo? (${cost})";
 
     Future.delayed(const Duration(seconds: 1)).then((value) => {
       tooltip = standardTooltip
     });
-
   }
 
   @override
@@ -35,7 +35,10 @@ class WeaponArea extends CollidableObject with Collidable, HasGameRef<ZombiesGam
 
     if (player.points < cost) return;
     if (player.weapons.contains(weapon)) {
-      setToolTipWhenOwned();
+      int indexOfWeapon = player.weapons.indexOf(weapon);
+      Weapon playerWeapon = player.weapons[indexOfWeapon];
+      playerWeapon.ammo = playerWeapon.maxAmmo;
+      gameRef.ui.updateAmmo();
       return;
     }
 
