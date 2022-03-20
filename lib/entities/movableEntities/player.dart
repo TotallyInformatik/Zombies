@@ -11,6 +11,7 @@ import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/interactive_area.dart';
+import 'package:cod_zombies_2d/maps/pathfinding/roomArea.dart';
 import 'package:cod_zombies_2d/maps/perks/perk_area.dart';
 import 'package:cod_zombies_2d/maps/weapons/weapon.dart';
 import 'package:flame/components.dart';
@@ -36,7 +37,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   /// player game attributes
   double _speed = 80;
   int playerDamageFactor = 1;
-  int points = 500;
+  int points = 50000;
 
   /// health
   int maximumHealthPoints = 3;
@@ -64,6 +65,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   bool _currentlyMoving = false;
   PlayerFaceDirection _currentFaceDirection = PlayerFaceDirection.RIGHT;
 
+  /// pathfinding
+  late RoomArea currentRoomArea;
 
   /// animations
   late final SpriteAnimation _standardRunAnimation;
@@ -147,6 +150,19 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
     gameRef.gameStatus = GameStatus.PLAYING;
+
+    currentRoomArea = gameRef.map.numberToPathfindingRoomArea[1]!; // player should always be in first room at start of game
+
+    /*
+    NeatPeriodicTaskScheduler(
+      interval: const Duration(seconds: 1),
+      name: 'pathfinding-update-timer',
+      timeout: const Duration(milliseconds: 100),
+      task: () async { updateRoomArea(); },
+      minCycle: const Duration(milliseconds: 100),
+    ).start();
+     */
+
     return super.onLoad();
   }
 
@@ -221,6 +237,14 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     gameRef.ui.showTooltip("");
   }
 
+  void updateRoomArea() async {
+    for (final Zombie zombie in gameRef.allZombies) {
+      if (currentRoomArea != zombie.currentRoomArea) {
+        zombie.updatePath();
+      }
+    }
+  }
+
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
 
@@ -257,6 +281,9 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   void onCollisionEnd(Collidable other) {
     if (other is InteractiveArea) {
       exitArea();
+    }
+    if (other is RoomArea) {
+      currentRoomArea = other;
     }
   }
 

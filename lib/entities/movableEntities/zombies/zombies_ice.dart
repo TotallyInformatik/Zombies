@@ -3,6 +3,7 @@ import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
+import 'package:cod_zombies_2d/maps/pathfinding/roomArea.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 
@@ -10,11 +11,11 @@ import '../zombies.dart';
 
 class ZombieIce extends Zombie {
 
-  final double _movementSpeed = 18;
+  final double movementSpeed = 18;
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
 
 
-  ZombieIce(srcX, srcY, int hp) : super(srcX, srcY, hp);
+  ZombieIce(srcX, srcY, int hp, RoomArea roomArea) : super(srcX, srcY, hp, roomArea);
 
 
 
@@ -53,19 +54,6 @@ class ZombieIce extends Zombie {
     if (hp <= 0) {
       removeOneself();
     }
-  }
-
-  void followPlayer(double dt) {
-
-    Player player = gameRef.player;
-
-    Vector2 movementVector = Vector2(
-        player.x - x,
-        player.y - y
-    );
-
-    position += movementVector.normalized() * _movementSpeed * dt;
-
   }
 
   @override

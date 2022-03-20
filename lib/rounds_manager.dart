@@ -11,11 +11,11 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
 
   static int hpIncreaseOn = 5;
   static int hardMaxZombieCountCap = 5;
-  static CircularLinkedList<ListNode<ZombieTypes>> zombiesList =
-    CircularLinkedList<ListNode<ZombieTypes>>(ListNode(ZombieTypes.NORMAL))
-      ..addNode(ListNode(ZombieTypes.ICE))
-      ..addNode(ListNode(ZombieTypes.BIG))
-      ..addNode(ListNode(ZombieTypes.SMOLL));
+  static CircularLinkedList<Node<ZombieTypes>> zombiesList =
+    CircularLinkedList<Node<ZombieTypes>>(Node(ZombieTypes.NORMAL))
+      ..addNode(Node(ZombieTypes.ICE))
+      ..addNode(Node(ZombieTypes.BIG))
+      ..addNode(Node(ZombieTypes.SMOLL));
 
   int zombieHPIncrease = 0;
 
@@ -28,7 +28,7 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
 
   int easterEggTriggerRound = 15;
 
-  ListNode<ZombieTypes> currentZombieType = zombiesList.first; // every round, there should be different zombies
+  Node<ZombieTypes> currentZombieType = zombiesList.first; // every round, there should be different zombies
 
   @override
   Future<void>? onLoad() {
@@ -69,7 +69,7 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
     gameRef.ui.updateRound(currentRound);
     zombiesKilledInCurrentRound = 0;
     currentZombieCount = 0;
-    currentZombieType = currentZombieType.next;
+    currentZombieType = currentZombieType.next!;
     requiredKillsInCurrentRound += 2;
 
     if (dynamicMaxZombieCountCap < hardMaxZombieCountCap) {
@@ -90,7 +90,7 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
     gameRef.ui.updateRound(currentRound);
     zombiesKilledInCurrentRound = 0;
     currentZombieCount = 0;
-    currentZombieType = ListNode(ZombieTypes.TNT);
+    currentZombieType = Node(ZombieTypes.TNT);
     requiredKillsInCurrentRound = 20;
     dynamicMaxZombieCountCap = 6;
   }

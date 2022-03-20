@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
 import 'package:cod_zombies_2d/game.dart';
+import 'package:cod_zombies_2d/maps/pathfinding/roomArea.dart';
 import 'package:cod_zombies_2d/rounds_manager.dart';
 import 'package:flame/components.dart';
 import 'package:neat_periodic_task/neat_periodic_task.dart';
@@ -29,10 +30,12 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
   /// resulting from the distance to the player
   bool active = true;
 
+  RoomArea roomArea;
+
   late NeatPeriodicTaskScheduler spawnTimer;
 
   late NeatPeriodicTaskScheduler distanceCheckTimer;
-  MonsterSpawnpoint(x, y, sizeX, sizeY, this.name) : super(position: Vector2(x, y), size: Vector2(sizeX, sizeY));
+  MonsterSpawnpoint(x, y, sizeX, sizeY, this.name, this.roomArea) : super(position: Vector2(x, y), size: Vector2(sizeX, sizeY));
 
   @override
   Future<void>? onLoad() {
@@ -75,7 +78,6 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
   void setInactive() {
     if (active) {
       active = false;
-      print("set inactive ${name}");
       spawnTimer.stop();
     }
   }
@@ -83,7 +85,6 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
   void setActive() {
     if (!active) {
       active = true;
-      print("set active ${name}");
       _setSpawnTimer();
       spawnTimer.start();
     }
@@ -113,9 +114,9 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
     Zombie newZombie;
 
     if (randomNumber == 0) {
-      newZombie = ZombieTNT(position.x + (size.x / 2), position.y);
+      newZombie = ZombieTNT(position.x + (size.x / 2), position.y, roomArea);
     } else {
-      newZombie = getZombieFromZombieType(position.x + (size.x / 2), position.y, gameRef.roundsManager.currentZombieType.content, gameRef.roundsManager.zombieHPIncrease);
+      newZombie = getZombieFromZombieType(position.x + (size.x / 2), position.y, gameRef.roundsManager.currentZombieType.content, gameRef.roundsManager.zombieHPIncrease, roomArea);
     }
 
     gameRef.add(newZombie);

@@ -4,6 +4,7 @@ import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/wall.dart';
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
+import 'package:cod_zombies_2d/maps/pathfinding/roomArea.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 
@@ -11,11 +12,11 @@ import '../zombies.dart';
 
 class ZombieTNT extends Zombie {
 
-  final double _movementSpeed = 40;
+  final double movementSpeed = 40;
   final Vector2 _hitboxRelation = Vector2(0.5, 1);
 
 
-  ZombieTNT(srcX, srcY) : super(srcX, srcY, 1);
+  ZombieTNT(srcX, srcY, RoomArea roomArea) : super(srcX, srcY, 1, roomArea);
 
 
 
@@ -54,19 +55,6 @@ class ZombieTNT extends Zombie {
   void processHit(int dHealth) {
     gameRef.add(Explosion(position));
     removeOneself();
-  }
-
-  void followPlayer(double dt) {
-
-    Player player = gameRef.player;
-
-    Vector2 movementVector = Vector2(
-        player.x - x,
-        player.y - y
-    );
-
-    position += movementVector.normalized() * _movementSpeed * dt;
-
   }
 
   @override

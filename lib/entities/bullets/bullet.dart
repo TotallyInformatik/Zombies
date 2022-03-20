@@ -7,6 +7,7 @@ import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/maps/door/door.dart';
 import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/interactive_area.dart';
+import 'package:cod_zombies_2d/maps/pathfinding/roomArea.dart';
 import 'package:flame/components.dart';
 
 import 'arrow.dart';
@@ -73,7 +74,8 @@ abstract class Bullet extends SpriteComponent with HasGameRef<ZombiesGame>, HasH
 
     if (other is! Player &&
         other is! Bullet &&
-        other is! InteractiveArea) {
+        other is! InteractiveArea &&
+        other is! RoomArea) {
       gameRef.remove(this);
     }
 

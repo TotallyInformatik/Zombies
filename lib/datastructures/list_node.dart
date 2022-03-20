@@ -1,7 +1,7 @@
-class ListNode<T> {
+class Node<T> {
   T content;
-  late ListNode<T> next;
+  Node<T>? next = null;
 
-  ListNode(this.content);
+  Node(this.content);
 
 }

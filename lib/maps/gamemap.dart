@@ -8,6 +8,7 @@ import 'package:cod_zombies_2d/maps/door/door_area.dart';
 import 'package:cod_zombies_2d/maps/easteregg/exit_area.dart';
 import 'package:cod_zombies_2d/maps/easteregg/skull_area.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
+import 'package:cod_zombies_2d/maps/pathfinding/roomArea.dart';
 import 'package:cod_zombies_2d/maps/perks/double_tap.dart';
 import 'package:cod_zombies_2d/maps/perks/juggernog.dart';
 import 'package:cod_zombies_2d/maps/perks/mule_kick.dart';
@@ -37,6 +38,22 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
     8: [11, 12, 13],
   };
 
+  final Map<int, int> monsterSpawnpointNumberToRoomAreaNumber = {
+    1: 1,
+    2: 1,
+    3: 3,
+    4: 7,
+    5: 7,
+    6: 15,
+    7: 15,
+    8: 13,
+    9: 5,
+    10: 5,
+    11: 18,
+    12: 18,
+    13: 18
+  };
+
   // areaToBoundingRooms gibt an, welche Räume (value) an welche doorAreas (key) angrenzen
   final Map<int, Pair<int, int>> doorAreaToBoundingRooms = {
     1: Pair(1, 2),
@@ -50,6 +67,20 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
     9: Pair(7, 8)
   };
 
+  final Map<int, int> doorAreaNumberToPathfindingRoomAreaNumber = {
+    1: 2,
+    2: 4,
+    3: 19,
+    4: 6,
+    5: 9,
+    6: 12,
+    7: 14,
+    8: 10,
+    9: 17
+  };
+
+  Map<int, RoomArea> numberToPathfindingRoomArea = {};
+
 
   final String mapName;
 
@@ -57,6 +88,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
   late final ExitArea exit_area;
 
   final String roomPrefix = "room_";
+  final String roomPointPrefix = "room_points_";
   final String areaPrefix = "area_";
   final String physicalDoorPrefix = "physical_";
   final String monsterSpawnpointPrefix = "monster_spawnpoint_";
@@ -121,9 +153,14 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
           add(player);
           break;
         case "monster":
-          MonsterSpawnpoint monsterSpawnpoint = new MonsterSpawnpoint(spawnPoint.x, spawnPoint.y, spawnPoint.width, spawnPoint.height, spawnPoint.name);
-          this.add(monsterSpawnpoint);
-          this.monsterSpawnpoints[spawnPoint.name] = monsterSpawnpoint;
+
+          String name = spawnPoint.name;
+          int number = int.parse(name.split("_").last);
+
+          MonsterSpawnpoint monsterSpawnpoint =
+            MonsterSpawnpoint(spawnPoint.x, spawnPoint.y, spawnPoint.width, spawnPoint.height, spawnPoint.name, numberToPathfindingRoomArea[monsterSpawnpointNumberToRoomAreaNumber[number]]!);
+          add(monsterSpawnpoint);
+          monsterSpawnpoints[spawnPoint.name] = monsterSpawnpoint;
           break;
       }
     }
@@ -230,6 +267,8 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
       Room boundingRoom1 = rooms["${roomPrefix}${boundingRoomNumbers.e1}"]!;
       Room boundingRoom2 = rooms["${roomPrefix}${boundingRoomNumbers.e2}"]!;
       Door correspondingPhysicalDoor = physicalDoors["${physicalDoorPrefix}${doorAreaNumber}"]!;
+      RoomArea? correspondingRoomArea = numberToPathfindingRoomArea[doorAreaNumberToPathfindingRoomAreaNumber[doorAreaNumber]];
+      correspondingRoomArea?.active = false;
 
       DoorArea newDoorArea = DoorArea(
         Vector2(
@@ -242,7 +281,8 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
         ),
         correspondingPhysicalDoor,
         Pair<Room, Room>(boundingRoom1, boundingRoom2),
-        doorAreaNumberToSpriteComponent[doorAreaNumber]!
+        doorAreaNumberToSpriteComponent[doorAreaNumber]!,
+        correspondingRoomArea!
       );
       add(newDoorArea);
 
@@ -389,9 +429,79 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
 
   }
 
+  addNeighborToRoomArea(int roomNumber, int neighborNumber) {
+    numberToPathfindingRoomArea[roomNumber]!.neighboringRooms.add(numberToPathfindingRoomArea[neighborNumber]!);
+    numberToPathfindingRoomArea[neighborNumber]!.neighboringRooms.add(numberToPathfindingRoomArea[roomNumber]!);
+  }
+
+  void _setupPathfinding() {
+
+    final roomObjects = map.tileMap.getObjectGroupFromLayer("PathfindingRooms");
+
+    for (final roomObject in roomObjects.objects) {
+
+      String type = roomObject.type;
+      int number = int.parse(type.split("_").last);
+
+      RoomArea newRoomArea = RoomArea(
+          Vector2(
+              roomObject.x,
+              roomObject.y
+          ),
+          Vector2(
+              roomObject.width,
+              roomObject.height
+          ),
+          number
+      );
+
+      numberToPathfindingRoomArea[number] = newRoomArea;
+      add(newRoomArea);
+
+    }
+
+    final roomPointObjects = map.tileMap.getObjectGroupFromLayer("PathfindingRoomPoints");
+
+    for (final roomPointObject in roomPointObjects.objects) {
+
+      String type = roomPointObject.type;
+      int number = int.parse(type.split("_").last);
+
+      numberToPathfindingRoomArea[number]?.roomPoint = Vector2(
+        roomPointObject.x,
+        roomPointObject.y
+      );
+
+    }
+
+    /// setting up the graph for the pathfinding algorithm:
+    addNeighborToRoomArea(1, 2);
+    addNeighborToRoomArea(1, 4);
+    addNeighborToRoomArea(2, 3);
+    addNeighborToRoomArea(3, 19);
+    addNeighborToRoomArea(7, 19);
+    addNeighborToRoomArea(4, 5);
+    addNeighborToRoomArea(5, 6);
+    addNeighborToRoomArea(6, 7);
+    addNeighborToRoomArea(7, 10);
+    addNeighborToRoomArea(10, 11);
+    addNeighborToRoomArea(11, 16);
+    addNeighborToRoomArea(16, 15);
+    addNeighborToRoomArea(15, 14);
+    addNeighborToRoomArea(13, 14);
+    addNeighborToRoomArea(13, 12);
+    addNeighborToRoomArea(5, 12);
+    addNeighborToRoomArea(5, 9);
+    addNeighborToRoomArea(8, 9);
+    addNeighborToRoomArea(11, 17);
+    addNeighborToRoomArea(18, 17);
+
+  }
+
   void _setupMap() {
 
     _setupWalls();
+    _setupPathfinding();
     _setupSpawnpoints();
     _setupMonsterSpawnpointPeriodicDistanceCheck();
     _setupRooms();

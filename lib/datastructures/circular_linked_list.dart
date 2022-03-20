@@ -1,6 +1,6 @@
 import 'package:cod_zombies_2d/datastructures/list_node.dart';
 
-class CircularLinkedList<T extends ListNode> {
+class CircularLinkedList<T extends Node> {
 
   /// TODO: finish implementation
 
