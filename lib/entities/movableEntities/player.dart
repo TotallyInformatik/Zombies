@@ -37,7 +37,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   /// player game attributes
   double _speed = 80;
   int playerDamageFactor = 1;
-  int points = 50000;
+  int points = 500;
 
   /// health
   int maximumHealthPoints = 3;

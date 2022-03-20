@@ -195,7 +195,7 @@ class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasG
       position += movementVector.normalized() * movementSpeed * dt;
 
       print(pathStack.front()!.content.roomPoint.distanceTo(position));
-      if (pathStack.front()!.content.roomPoint.distanceTo(position) < 5) {
+      if (pathStack.front()!.content.roomPoint.distanceTo(position) < 20) {
         print("popping");
         pathStack.pop();
       }

@@ -35,6 +35,7 @@ class WeaponArea extends CollidableObject with Collidable, HasGameRef<ZombiesGam
 
     if (player.points < cost) return;
     if (player.weapons.contains(weapon)) {
+      player.changePoints(-cost);
       int indexOfWeapon = player.weapons.indexOf(weapon);
       Weapon playerWeapon = player.weapons[indexOfWeapon];
       playerWeapon.ammo = playerWeapon.maxAmmo;
