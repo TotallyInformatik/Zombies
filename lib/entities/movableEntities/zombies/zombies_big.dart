@@ -32,9 +32,13 @@ class ZombieBig extends Zombie {
   @override
   void update(double dt) {
 
-    followPlayer(dt);
+    super.followPlayer(dt);
 
+    if (distance(gameRef.player) < 22) {
+      gameRef.player.processHit(1);
+    }
     super.update(dt);
+
   }
 
   @override

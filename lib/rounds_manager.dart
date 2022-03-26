@@ -12,9 +12,9 @@ class RoundsManager extends Component with HasGameRef<ZombiesGame> {
   static int hpIncreaseOn = 5;
   static int hardMaxZombieCountCap = 5;
   static CircularLinkedList<Node<ZombieTypes>> zombiesList =
-    CircularLinkedList<Node<ZombieTypes>>(Node(ZombieTypes.NORMAL))
-      ..addNode(Node(ZombieTypes.ICE))
+    CircularLinkedList<Node<ZombieTypes>>(Node(ZombieTypes.SMOLL))
       ..addNode(Node(ZombieTypes.BIG))
+      ..addNode(Node(ZombieTypes.NORMAL))
       ..addNode(Node(ZombieTypes.SMOLL));
 
   int zombieHPIncrease = 0;

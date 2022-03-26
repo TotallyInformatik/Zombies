@@ -1,6 +1,10 @@
+import 'dart:html';
+
 import 'package:cod_zombies_2d/entities/bullets/bullet.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/player.dart';
 import 'package:cod_zombies_2d/entities/movableEntities/zombies.dart';
+import 'package:cod_zombies_2d/hud/game_over_menu.dart';
+import 'package:cod_zombies_2d/hud/pause_menu.dart';
 import 'package:cod_zombies_2d/maps/gamemap.dart';
 import 'package:cod_zombies_2d/maps/monster_spawnpoint.dart';
 import 'package:cod_zombies_2d/rounds_manager.dart';
@@ -22,15 +26,15 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
 
   GameStatus gameStatus = GameStatus.LOADING;
 
-  final RoundsManager roundsManager = RoundsManager();
-  late final Player player;
-  late final OverlayUI ui;
+  late RoundsManager roundsManager;
+  late Player player;
+  late OverlayUI ui;
 
   final List<Zombie> allZombies = [];
 
   Vector2 viewportDimensions = Vector2(400, 200);
 
-  late final GameMap map;
+  late GameMap map;
 
   @override
   Future<void> onLoad() async {
@@ -39,6 +43,8 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
     await Flame.device.setLandscape();
 
     map = GameMap("map2.tmx");
+    ui = OverlayUI();
+
     await add(map);
 
     player = map.player;
@@ -49,16 +55,25 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
         player
     );
 
-    ui = OverlayUI();
+
     add(ui);
 
+    roundsManager = RoundsManager();
     add(roundsManager);
 
     return super.onLoad();
   }
 
+  void startGame() async {
+    gameStatus = GameStatus.PLAYING;
+  }
+
   void endGame() {
 
+    overlays.add(GameOverMenu.id);
+    pauseEngine();
+
+    /*
     /// removing all zombies
     for (final Zombie zombie in allZombies) {
       remove(zombie);
@@ -71,6 +86,7 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
       monsterSpawnpoint.setInactive();
     }
     map.monsterSpawnpointActivityCheckTimer.stop();
+     */
 
   }
 
@@ -101,6 +117,10 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
             player.switchWeapons(keysPressed);
           }
 
+          if (keysPressed.contains(LogicalKeyboardKey.escape)) {
+            pause();
+          }
+
           break;
         }
       case RawKeyUpEvent:
@@ -115,6 +135,11 @@ class ZombiesGame extends FlameGame with HasCollidables, KeyboardEvents, MouseMo
     }
 
     return KeyEventResult.handled;
+  }
+
+  void pause() {
+    overlays.add(PauseMenu.id);
+    pauseEngine();
   }
 
   @override

@@ -110,11 +110,13 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
     if (gameRef.roundsManager.currentZombieCount > gameRef.roundsManager.dynamicMaxZombieCountCap) return;
 
     Random random = Random();
-    int randomNumber = random.nextInt(10);
+    int randomNumber = random.nextInt(20);
     Zombie newZombie;
 
     if (randomNumber == 0) {
       newZombie = ZombieTNT(position.x + (size.x / 2), position.y, roomArea);
+    } if (randomNumber == 1) {
+      newZombie = getZombieFromZombieType(position.x + (size.x / 2), position.y, ZombieTypes.ICE, gameRef.roundsManager.zombieHPIncrease, roomArea);
     } else {
       newZombie = getZombieFromZombieType(position.x + (size.x / 2), position.y, gameRef.roundsManager.currentZombieType.content, gameRef.roundsManager.zombieHPIncrease, roomArea);
     }
@@ -122,7 +124,6 @@ class MonsterSpawnpoint extends PositionComponent with HasGameRef<ZombiesGame> {
     gameRef.add(newZombie);
     gameRef.allZombies.add(newZombie);
     gameRef.roundsManager.currentZombieCount++;
-
 
   }
 

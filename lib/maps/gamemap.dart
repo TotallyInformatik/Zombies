@@ -203,6 +203,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
 
   void _setupDoors() async {
 
+    print("setting up doors");
     /// setting up actual physical doors with collision boxes
     final physicalDoorsLayer = map.tileMap.getObjectGroupFromLayer("PhysicalDoors");
 
@@ -235,6 +236,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
 
       for (final doorAreaObject in doorArea.objects) {
 
+        print("adding spikes");
         SpriteComponent currentSprite = SpriteComponent(
           sprite: spike,
           position: Vector2(
@@ -245,6 +247,7 @@ class GameMap extends Component with HasGameRef<ZombiesGame> {
               doorAreaObject.width,
               doorAreaObject.height
           ),
+          priority: 100
         );
 
         gameRef.add(currentSprite);

@@ -30,9 +30,9 @@ class ZombieIce extends Zombie {
   @override
   void update(double dt) {
 
-    followPlayer(dt);
-
+    super.followPlayer(dt);
     super.update(dt);
+
   }
 
   @override

@@ -73,6 +73,10 @@ class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasG
 
     followPlayer(dt);
 
+    if (distance(gameRef.player) < 17) {
+      gameRef.player.processHit(1);
+    }
+
     super.update(dt);
   }
 
@@ -131,7 +135,7 @@ class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasG
         break;
       }
 
-      for (final nextRoom in current!.content.neighboringRooms) {
+      for (final nextRoom in current.content.neighboringRooms) {
         if (!cameFrom.containsKey(nextRoom) && nextRoom.active) {
           frontier.enqueue(nextRoom);
           cameFrom[nextRoom] = current.content;
@@ -195,7 +199,7 @@ class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasG
       position += movementVector.normalized() * movementSpeed * dt;
 
       print(pathStack.front()!.content.roomPoint.distanceTo(position));
-      if (pathStack.front()!.content.roomPoint.distanceTo(position) < 20) {
+      if (pathStack.front()!.content.roomPoint.distanceTo(position) < 40) {
         print("popping");
         pathStack.pop();
       }

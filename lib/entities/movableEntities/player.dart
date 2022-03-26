@@ -149,19 +149,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
     addHitbox(HitboxCircle(position: Vector2(100, 100)));
 
-    gameRef.gameStatus = GameStatus.PLAYING;
-
     currentRoomArea = gameRef.map.numberToPathfindingRoomArea[1]!; // player should always be in first room at start of game
-
-    /*
-    NeatPeriodicTaskScheduler(
-      interval: const Duration(seconds: 1),
-      name: 'pathfinding-update-timer',
-      timeout: const Duration(milliseconds: 100),
-      task: () async { updateRoomArea(); },
-      minCycle: const Duration(milliseconds: 100),
-    ).start();
-     */
 
     return super.onLoad();
   }
@@ -179,7 +167,9 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
   @override
   void processHit(int dHealth) {
-    updateHealth(-dHealth);
+    if (!_currentlyInvincible) {
+      updateHealth(-dHealth);
+    }
   }
 
   @override
@@ -244,6 +234,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
       }
     }
   }
+
+
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {

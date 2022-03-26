@@ -32,9 +32,13 @@ class ZombieTNT extends Zombie {
   @override
   void update(double dt) {
 
-    followPlayer(dt);
+    super.followPlayer(dt);
+    if (distance(gameRef.player) < 17) {
+      gameRef.player.processHit(4);
+    }
 
     super.update(dt);
+
   }
 
   @override
