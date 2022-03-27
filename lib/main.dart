@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cod_zombies_2d/game.dart';
 import 'package:cod_zombies_2d/hud/game_over_menu.dart';
 import 'package:cod_zombies_2d/hud/main_menu.dart';
