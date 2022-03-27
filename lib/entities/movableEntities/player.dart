@@ -37,7 +37,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
   /// player game attributes
   double _speed = 80;
   int playerDamageFactor = 1;
-  int points = 500;
+  int points = 500000;
 
   /// health
   int maximumHealthPoints = 3;
@@ -154,6 +154,10 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     return super.onLoad();
   }
 
+  void resetInvincibility() {
+    _currentlyInvincible = false;
+  }
+
   Future<void> invincibilityFrames() async {
     Future.delayed(const Duration(seconds: 1), () {
       _currentlyInvincible = false;
@@ -167,17 +171,19 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
 
   @override
   void processHit(int dHealth) {
+
     if (!_currentlyInvincible) {
+      _currentlyInvincible = true;
+      invincibilityFrames();
       updateHealth(-dHealth);
     }
+
   }
 
   @override
   void updateHealth(int dHealth) {
     currentHealthPoints += dHealth;
     gameRef.ui.updateHearts(currentHealthPoints);
-    _currentlyInvincible = true;
-    invincibilityFrames();
 
     if (currentHealthPoints <= 0) {
       die();
@@ -326,8 +332,6 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     BulletTypes bulletType = weapons[currentActiveWeaponIndex].weaponBullet;
 
 
-    weapons[currentActiveWeaponIndex].shoot();
-    gameRef.ui.updateAmmo();
 
     switch (bulletType) {
 
@@ -341,6 +345,9 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
         );
         gameRef.add(returnBulletFromBulletType(bulletType, position, bulletMovementVector.normalized(), tapPosition)!);
 
+        weapons[currentActiveWeaponIndex].shoot();
+        gameRef.ui.updateAmmo();
+
         break;
       case BulletTypes.EXPLOSION:
 
@@ -351,6 +358,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
         }
 
         gameRef.add(Explosion(tapPosition));
+        weapons[currentActiveWeaponIndex].shoot();
+        gameRef.ui.updateAmmo();
 
         break;
       case BulletTypes.EXCALIBUR:
@@ -360,6 +369,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
           return;
         }
         gameRef.add(Excalibur(position));
+        weapons[currentActiveWeaponIndex].shoot();
+        gameRef.ui.updateAmmo();
 
         break;
     }

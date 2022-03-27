@@ -31,6 +31,7 @@ class ZombieIce extends Zombie {
   void update(double dt) {
 
     super.followPlayer(dt);
+
     super.update(dt);
 
   }

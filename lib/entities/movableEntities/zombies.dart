@@ -98,6 +98,7 @@ class Zombie extends SpriteAnimationComponent with HasHitboxes, Collidable, HasG
     }
 
     super.onCollisionEnd(other);
+
   }
 
   @override
