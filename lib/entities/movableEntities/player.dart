@@ -196,6 +196,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<ZombiesGame>, HasH
     possessedPerks.clear();
     deactivateJuggernog();
     maxWeaponCount = 2;
+    playerDamageFactor = 1;
     currentActiveWeaponIndex = 0;
     gameRef.ui.updateWeapon();
     if (weapons.length == 3) {
